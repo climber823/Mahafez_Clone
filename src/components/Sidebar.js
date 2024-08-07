@@ -5,9 +5,10 @@ import axios from 'axios';
 import { FaInfoCircle } from 'react-icons/fa';
 import { selectAsset } from '../redux/actions';
 import Dropdown from './Dropdown';
+import ForexPairs from './ForexPairs';
 
 const SidebarContainer = styled.div`
-  width: 460px;
+  width: 470px;
   background-color: #131a33;
   color: #fff;
   height: 100vh;
@@ -67,19 +68,102 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchForexData = async () => {
-      const apiKey = '75c46adb935f4fd39d47e76442000afd';
+      const forexPairs = [
+        "AUD/CAD",
+        "AUD/CHF",
+        "AUD/HKD",
+        "AUD/JPY",
+        "AUD/NZD",
+        "AUD/SGD",
+        "AUD/USD",
+        "CAD/CHF",
+        "CAD/HKD",
+        "CAD/JPY",
+        "CAD/SGD",
+        "CHF/HKD",
+        "CHF/JPY",
+        "EUR/AUD",
+        "EUR/CAD",
+        "EUR/CHF",
+        "EUR/CZK",
+        "EUR/DKK",
+        "EUR/GBP",
+        "EUR/HKD",
+        "EUR/HUF",
+        "EUR/JPY",
+        "EUR/NOK",
+        "EUR/NZD",
+        "EUR/PLN",
+        "EUR/SEK",
+        "EUR/SGD",
+        "EUR/USD",
+        "GBP/AUD",
+        "GBP/CAD",
+        "GBP/CHF",
+        "GBP/HKD",
+        "GBP/JPY",
+        "GBP/NZD",
+        "GBP/PLN",
+        "GBP/SGD",
+        "GBP/USD",
+        "HKD/JPY",
+        "NZD/CAD",
+        "NZD/CHF",
+        "NZD/HKD",
+        "NZD/JPY",
+        "NZD/SGD",
+        "NZD/USD",
+        "SGD/CHF",
+        "SGD/HKD",
+        "SGD/JPY",
+        "USD/CAD",
+        "USD/CHF",
+        "USD/CNH",
+        "USD/CZK",
+        "USD/DKK",
+        "USD/HKD",
+        "USD/HUF",
+        "USD/INR",
+        "USD/JPY",
+        "USD/MXN",
+        "USD/NOK",
+        "USD/PLN",
+        "USD/SAR",
+        "USD/SEK",
+        "USD/SGD",
+        "USD/THB",
+      ];
+    
       try {
-        const response = await axios.get('https://api.twelvedata.com/forex_pairs', {
-          params: {
-            apikey: apiKey
-          }
+        // Step 2: Fetch the exchange rates for each base currency
+        const baseCurrencies = Array.from(new Set(forexPairs.map(pair => pair.split('/')[0])));
+        const forexDataPromises = baseCurrencies.map(async (baseCurrency) => {
+          const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+          return response.data;
         });
-        const forexData = response.data.data.map(pair => ({
-          asset: pair.symbol,
-          buy: pair.bid,
-          sell: pair.ask,
-          spread: (pair.ask - pair.bid).toFixed(5)
-        }));
+    
+        const exchangeRates = await Promise.all(forexDataPromises);
+    
+        // Combine the fetched data into a single object
+        const ratesMap = {};
+        exchangeRates.forEach(rate => {
+          ratesMap[rate.base] = rate.rates;
+        });
+    
+        const forexData = forexPairs.map((pair) => {
+          const [base, target] = pair.split('/');
+          const buy = ratesMap[base][target];
+          const sell = 1 / buy;  // Approximating ask price
+          
+          return {
+            asset: pair,
+            buy: buy ? buy.toFixed(5) : "null",
+            sell: sell ? sell.toFixed(5) : "null",
+            spread: buy && sell ? (sell - buy).toFixed(1) : "null"
+          };
+        });
+    
+        console.log(forexData);
         setData(forexData);
       } catch (error) {
         console.error('Error fetching data:', error);
