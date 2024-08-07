@@ -1,20 +1,20 @@
-// src/App.js
+// App.js
 import React from 'react';
-import './App.css';
-import Sidebar from './components/Sidebar';
-import Chart from './components/Chart';
-import Positions from './components/Positions';
+import Sidebar from './components/Sidebar';  // Adjust the import path if necessary
+import Chart from './components/Chart';      // Adjust the import path if necessary
+import Positions from './components/Positions';  // Adjust the import path if necessary
+import './App.css';  // Assuming your CSS file is named App.css
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
+    <div className="container">
       <Sidebar />
-      <div className="main-content">
+      <div className="content">
         <Chart />
         <Positions />
       </div>
     </div>
   );
-}
+};
 
 export default App;

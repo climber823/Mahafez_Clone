@@ -1,11 +1,10 @@
-// src/components/Chart.js
-import React, { useEffect } from 'react';
+import React from 'react';
 import TradingViewWidget from 'react-tradingview-widget';
 
 const Chart = () => {
   return (
-    <div className="chart">
-      <TradingViewWidget symbol="OANDA:AUDCAD" />
+    <div className="tradingview-widget">
+      <TradingViewWidget symbol="OANDA:AUDCAD" autosize />
     </div>
   );
 };
