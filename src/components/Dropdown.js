@@ -1,5 +1,4 @@
-// Dropdown.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaCaretDown } from 'react-icons/fa';
 
@@ -16,6 +15,8 @@ const DropdownButton = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
+  min-width: ${props => props.minWidth || 'auto'};
+  text-align: left;
 
   &:hover {
     background-color: #3a3f51;
@@ -42,24 +43,51 @@ const DropdownItem = styled.a`
   }
 `;
 
-const Dropdown = () => {
+const Dropdown = ({ onSelectCategory, selectedCategory, onWidthChange }) => {
   const [show, setShow] = useState(false);
+  const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const toggleDropdown = () => setShow(!show);
 
+  const handleSelect = (category) => {
+    onSelectCategory(category);
+    setShow(false);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShow(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (buttonRef.current) {
+      onWidthChange(buttonRef.current.offsetWidth);
+    }
+  }, [selectedCategory]);
+
   return (
-    <DropdownContainer>
-      <DropdownButton onClick={toggleDropdown}>
-        All <FaCaretDown style={{ marginLeft: '10px' }} />
+    <DropdownContainer ref={dropdownRef}>
+      <DropdownButton ref={buttonRef} onClick={toggleDropdown}>
+        {selectedCategory} <FaCaretDown style={{ marginLeft: '10px' }} />
       </DropdownButton>
       <DropdownContent show={show}>
-        <DropdownItem href="#">Most Popular</DropdownItem>
-        <DropdownItem href="#">My Favorites</DropdownItem>
-        <DropdownItem href="#">Currencies</DropdownItem>
-        <DropdownItem href="#">Commodities</DropdownItem>
-        <DropdownItem href="#">Indices</DropdownItem>
-        <DropdownItem href="#">Stocks</DropdownItem>
-        <DropdownItem href="#">Crypto Currencies</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('All')}>All</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('Most Popular')}>Most Popular</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('My Favorites')}>My Favorites</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('Currencies')}>Currencies</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('Commodities')}>Commodities</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('Indices')}>Indices</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('Stocks')}>Stocks</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('Crypto Currencies')}>Crypto Currencies</DropdownItem>
       </DropdownContent>
     </DropdownContainer>
   );

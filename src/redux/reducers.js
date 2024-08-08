@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { SELECT_ASSET } from './actions';
 
 const initialState = {
-  selectedAsset: 'EUR/USD',
+  selectedAsset: 'Copper',
 };
 
 const assetReducer = (state = initialState, action) => {

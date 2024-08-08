@@ -11,15 +11,12 @@ const SidebarContainer = styled.div`
   width: 400px;
   background-color: #131a33;
   color: #fff;
-  height: 100vh;
   padding: 10px;
+  height: 94.5vh;
   box-sizing: border-box;
   overflow-y: auto;
-`;
-
-const Header = styled.h2`
-  margin: 0 0 10px 0;
-  padding: 10px;
+  border-left: 0.6vh grey solid;
+  border-right: 0.6vh grey solid;
 `;
 
 const SearchBox = styled.div`
@@ -29,10 +26,12 @@ const SearchBox = styled.div`
 `;
 
 const SearchInput = styled.input`
-  width: 100%;
   padding: 10px;
   border: none;
   border-radius: 5px;
+  flex-grow: 1;
+  min-width: ${props => props.minWidth || '100px'};
+  transition: min-width 0.3s ease;
 `;
 
 const Table = styled.table`
@@ -61,34 +60,66 @@ const IconWrapper = styled.div`
   justify-content: center;
 `;
 
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  margin: 20px 0;
+`;
+
 const Sidebar = () => {
   const dispatch = useDispatch();
   const selectedAsset = useSelector(state => state.asset.selectedAsset);
   const [data, setData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [error, setError] = useState('');
+  const [dropdownWidth, setDropdownWidth] = useState('100px');
+
+  const getCategory = (name) => {
+    switch(name) {
+      case "All": return "all";
+      case "Most Popular": return "popular";
+      case "My Favorites": return "favorites";
+      case "Currencies": return "currencies";
+      case "Commodities": return "commodities";
+      case "Indices": return "indices";
+      case "Stocks": return "stocks";
+      case "Crypto Currencies": return "crypto";
+      default: return "all";
+    }
+  }
 
   useEffect(() => {
     const fetchForexData = async () => {
       try {
-        // Step 2: Fetch the exchange rates for each base currency
-        const baseCurrencies = Array.from(new Set(forexPairs.map(pair => pair.split('/')[0])));
+        const category = getCategory(selectedCategory);
+        const pairs = forexPairs[category] || forexPairs.all;
+
+        const baseCurrencies = Array.from(new Set(pairs.map(pair => pair.split('/')[0])));
         const forexDataPromises = baseCurrencies.map(async (baseCurrency) => {
-          const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
-          return response.data;
+          try {
+            const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+            return response.data;
+          } catch (err) {
+            console.error(`Error fetching data for ${baseCurrency}:`, err);
+            return null;
+          }
         });
-    
+
         const exchangeRates = await Promise.all(forexDataPromises);
-    
-        // Combine the fetched data into a single object
+
         const ratesMap = {};
         exchangeRates.forEach(rate => {
-          ratesMap[rate.base] = rate.rates;
+          if (rate) {
+            ratesMap[rate.base] = rate.rates;
+          }
         });
-    
-        const forexData = forexPairs.map((pair) => {
+
+        const forexData = pairs.map((pair) => {
           const [base, target] = pair.split('/');
-          const buy = ratesMap[base][target];
-          const sell = 1 / buy;  // Approximating ask price
-          
+          const buy = ratesMap[base] ? ratesMap[base][target] : null;
+          const sell = buy ? 1 / buy : null;
+
           return {
             asset: pair,
             buy: buy ? buy.toFixed(5) : "null",
@@ -96,23 +127,38 @@ const Sidebar = () => {
             spread: buy && sell ? (sell - buy).toFixed(1) : "null"
           };
         });
-    
-        console.log(forexData);
+
         setData(forexData);
+        setError(''); // Clear error if data is fetched successfully
       } catch (error) {
         console.error('Error fetching data:', error);
+        setData([]); // Clear existing data
+        setError('Failed to fetch data. Please try again later.');
       }
     };
 
     fetchForexData();
-  }, []);
+  }, [selectedCategory]);
+
+  const filteredData = data.filter(row => row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <SidebarContainer>
       <SearchBox>
-        <Dropdown />
-        <SearchInput type="text" placeholder="Search" />
+        <Dropdown 
+          onSelectCategory={setSelectedCategory} 
+          selectedCategory={selectedCategory} 
+          onWidthChange={setDropdownWidth}
+        />
+        <SearchInput 
+          type="text" 
+          placeholder="Search" 
+          value={searchQuery} 
+          onChange={(e) => setSearchQuery(e.target.value)} 
+          minWidth={dropdownWidth}
+        />
       </SearchBox>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       <Table>
         <TableHead>
           <TableRow>
@@ -124,19 +170,25 @@ const Sidebar = () => {
           </TableRow>
         </TableHead>
         <tbody>
-          {data.map((row, index) => (
-            <TableRow key={index} onClick={() => dispatch(selectAsset(row.asset))}>
-              <TableCell>{row.asset}</TableCell>
-              <TableCell>{row.buy}</TableCell>
-              <TableCell>{row.sell}</TableCell>
-              <TableCell>{row.spread}</TableCell>
-              <TableCell>
-                <IconWrapper>
-                  <FaInfoCircle />
-                </IconWrapper>
-              </TableCell>
+          {filteredData.length > 0 ? (
+            filteredData.map((row, index) => (
+              <TableRow key={index} onClick={() => dispatch(selectAsset(row.asset))}>
+                <TableCell>{row.asset}</TableCell>
+                <TableCell>{row.buy}</TableCell>
+                <TableCell>{row.sell}</TableCell>
+                <TableCell>{row.spread}</TableCell>
+                <TableCell>
+                  <IconWrapper>
+                    <FaInfoCircle />
+                  </IconWrapper>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan="5">No data available</TableCell>
             </TableRow>
-          ))}
+          )}
         </tbody>
       </Table>
     </SidebarContainer>

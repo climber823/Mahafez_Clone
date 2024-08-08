@@ -2,9 +2,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-bottom: 5px solid grey;
-  margin-bottom: 0px;
+  border-bottom: 0.6vh solid grey;
+  height: 4.4vh;
+  padding: 0px 1vw;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .header-left {
@@ -24,7 +26,7 @@
 }
 
 .header-title {
-  font-size: 1.5rem;
+  font-size: 18px;
   font-weight: bold;
 }
 
@@ -38,8 +40,4 @@
 
 .negative {
   color: red; /* Adjust the color for negative values */
-}
-
-.welcome {
-  font-size: 1rem;
 }
