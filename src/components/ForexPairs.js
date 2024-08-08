@@ -1,4 +1,4 @@
-const ForexPairs = [
+const forexPairs = [
   "AUD/CAD",
   "AUD/CHF",
   "AUD/HKD",
@@ -64,4 +64,4 @@ const ForexPairs = [
   "USD/THB",
 ];
 
-export default ForexPairs
+export default forexPairs

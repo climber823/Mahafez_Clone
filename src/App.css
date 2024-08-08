@@ -1,7 +1,13 @@
+.app-container {
+  background-color: #131a33;
+  color: white;
+}
+
 /* Styles for the main container */
 .container {
   display: flex;
   height: 100%;
+  font-size: 12px;
 }
 
 /* Styles for the sidebar */
@@ -15,13 +21,26 @@
 /* Styles for the content area */
 .content {
   flex-grow: 1;
-  padding: 20px;
+  padding: 0px 20px;
+}
+
+.chart-analysis-container {
+  display: flex;
+  gap: 20px;  /* Adds space between Chart and Analysis */
+}
+
+.chart-analysis-container > .chart {
+  flex: 0 0 65%;  /* Chart takes 70% of the width */
+}
+
+.chart-analysis-container > .analysis {
+  flex: 0 0 34%;  /* Analysis takes 30% of the width */
 }
 
 /* Styles for the TradingView widget */
 .tradingview-widget {
   width: 100%;
-  height: 500px;
+  height: 450px;
   margin-bottom: 20px;
 }
 

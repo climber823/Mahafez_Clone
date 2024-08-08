@@ -7,7 +7,7 @@ const Chart = () => {
 
   return (
     <div className="tradingview-widget">
-      <TradingViewWidget symbol={selectedAsset.replace("/", "")} autosize />
+      <TradingViewWidget symbol={selectedAsset.replace("/", "")} autosize theme="dark" />
     </div>
   );
 };
