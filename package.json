@@ -26,7 +26,7 @@
     "web3": "^4.11.1"
   },
   "scripts": {
-    "start": "concurrently \"node server/server.js\" \"react-scripts start\"",
+    "start": "react-scripts start",
     "build": "concurrently \"node server/server.js\" \"react-scripts build\"",
     "test": "concurrently \"node server/server.js\" \"react-scripts test\"",
     "eject": "concurrently \"node server/server.js\" \"react-scripts eject\""
