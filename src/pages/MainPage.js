@@ -5,7 +5,6 @@ import Chart from '../components/Chart';      // Adjust the import path if neces
 import Positions from '../components/Positions';  // Adjust the import path if necessary
 import Analysis from '../components/Analysis';  // Import the Analysis component
 import Header from '../components/Header';  // Import the Header component
-import './Main.css';  // Assuming your CSS file is named App.css
 
 const MainPage = () => {
   return (

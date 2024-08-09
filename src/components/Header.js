@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Modal, ChangePasswordContent, PersonalDetailsContent, WithdrawalRequestContent } from './Modal'; // Import the Modal component
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/actions';
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -108,6 +110,12 @@ const Header = () => {
   const [modalType, setModalType] = useState(null); // Add state for modal type
   const dropdownRef = useRef(null);
 
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
@@ -158,7 +166,7 @@ const Header = () => {
             <DropdownItem href="#" onClick={() => openModal('personalDetails')}>Personal Details</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('withdrawMoney')}>Withdraw Money</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('language')}>Language</DropdownItem>
-            <DropdownItem href="#">Logout</DropdownItem>
+            <DropdownItem href="#" onClick={handleLogout}>Logout</DropdownItem>
           </DropdownContent>
         </Dropdown>
       </HeaderRight>
