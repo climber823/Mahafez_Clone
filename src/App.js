@@ -1,30 +1,20 @@
 // App.js
-import React from 'react';
-import Sidebar from './components/Sidebar';  // Adjust the import path if necessary
-import Chart from './components/Chart';      // Adjust the import path if necessary
-import Positions from './components/Positions';  // Adjust the import path if necessary
-import Analysis from './components/Analysis';  // Import the Analysis component
-import Header from './components/Header';  // Import the Header component
-import './App.css';  // Assuming your CSS file is named App.css
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
 
 const App = () => {
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
+  // Handle clicks outside the dropdown to close it
+  useEffect(() => {
+    console.log(isLoggedIn)
+  }, []);
+
   return (
-    <div className="app-container">
-      <Header />
-      <div className="container">
-        <Sidebar />
-        <div className="content">
-          <div className="chart-analysis-container">
-            <div className="chart">
-              <Chart />
-            </div>
-            <div className="analysis">
-              <Analysis />
-            </div>
-          </div>
-          <Positions />
-        </div>
-      </div>
+    <div>
+      {isLoggedIn ? <MainPage /> : <LoginPage />}
     </div>
   );
 };

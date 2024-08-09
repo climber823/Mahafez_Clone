@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
-import { SELECT_ASSET } from './actions';
+import { SELECT_ASSET, LOGIN, LOGOUT } from './actions';
 
 const initialState = {
   selectedAsset: 'Copper',
+  isLoggedIn: true,
 };
 
 const assetReducer = (state = initialState, action) => {
@@ -12,11 +13,25 @@ const assetReducer = (state = initialState, action) => {
         ...state,
         selectedAsset: action.payload,
       };
+
     default:
       return state;
   }
 };
 
+const authReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case LOGIN:
+      return { ...state, isLoggedIn: true };
+    case LOGOUT:
+      return { ...state, isLoggedIn: false };
+    default:
+      return state;
+  }
+};
+
+
 export default combineReducers({
   asset: assetReducer,
+  auth: authReducer,
 });

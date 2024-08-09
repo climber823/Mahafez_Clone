@@ -8,7 +8,7 @@ import Dropdown from './Dropdown';
 import forexPairs from './ForexPairs';
 
 const SidebarContainer = styled.div`
-  width: 400px;
+  width: 410px;
   background-color: #131a33;
   color: #fff;
   padding: 10px;
