@@ -12,3 +12,4 @@ export const login = () => ({ type: LOGIN });
 
 // store.js (add this at the top)
 export const logout = () => ({ type: LOGOUT });
+

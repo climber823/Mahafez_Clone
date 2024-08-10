@@ -8,7 +8,7 @@ import Dropdown from './Dropdown';
 import forexPairs from './ForexPairs';
 
 const SidebarContainer = styled.div`
-  width: 410px;
+  width: 100%;
   background-color: #131a33;
   color: #fff;
   padding: 10px;
@@ -96,39 +96,50 @@ const Sidebar = () => {
         const pairs = forexPairs[category] || forexPairs.all;
 
         const baseCurrencies = Array.from(new Set(pairs.map(pair => pair.split('/')[0])));
-        const forexDataPromises = baseCurrencies.map(async (baseCurrency) => {
+        const forexDataPromises = pairs.map(async (pair) => {
           try {
-            const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
-            return response.data;
+            // const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+            const from_currency = pair.split('/')[0]
+            const to_currency = pair.split('/')[1] ? pair.split('/')[1] : "USD"
+            const apiKey = 'N5DPQO87W3JVK201'; 
+            console.log("from_currency", from_currency)
+            console.log("to_currency", to_currency)
+            const response = await fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${from_currency}&to_currency=${to_currency}&apikey=${apiKey}`);
+            console.log("response", response.json())
+            // return (response.json())["Realtime Currency Exchange Rate"];
           } catch (err) {
-            console.error(`Error fetching data for ${baseCurrency}:`, err);
+            // console.error(`Error fetching data for ${pair}:`, err);
             return null;
           }
         });
 
-        const exchangeRates = await Promise.all(forexDataPromises);
+        // const exchangeRates = await Promise.all(forexDataPromises);
 
-        const ratesMap = {};
-        exchangeRates.forEach(rate => {
-          if (rate) {
-            ratesMap[rate.base] = rate.rates;
-          }
-        });
+        // console.log("forexDataPromises", forexDataPromises)
 
-        const forexData = pairs.map((pair) => {
-          const [base, target] = pair.split('/');
-          const buy = ratesMap[base] ? ratesMap[base][target] : null;
-          const sell = buy ? 1 / buy : null;
+        // const buyMap = {};
+        // const sellMap = {};
+        // exchangeRates.forEach(rate => {
+        //   if (rate) {
+        //     buyMap[rate["1. From_Currency Code"]] = rate["9. Ask Price"];
+        //     sellMap[rate["1. From_Currency Code"]] = rate["8. Bid Price"]
+        //   }
+        // });
 
-          return {
-            asset: pair,
-            buy: buy ? buy.toFixed(5) : "null",
-            sell: sell ? sell.toFixed(5) : "null",
-            spread: buy && sell ? (sell - buy).toFixed(1) : "null"
-          };
-        });
+        // const forexData = pairs.map((pair) => {
+        //   const [base, target] = pair.split('/');
+        //   const buy = buyMap[base] ? buyMap[base] : null;
+        //   const sell = sellMap[base] ? sellMap[base] : null;
 
-        setData(forexData);
+        //   return {
+        //     asset: pair,
+        //     buy: buy ? buy.toFixed(5) : "null",
+        //     sell: sell ? sell.toFixed(5) : "null",
+        //     spread: buy && sell ? (sell - buy).toFixed(1) : "null"
+        //   };
+        // });
+
+        // setData(forexData);
         setError(''); // Clear error if data is fetched successfully
       } catch (error) {
         console.error('Error fetching data:', error);

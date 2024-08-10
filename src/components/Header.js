@@ -15,6 +15,8 @@ const HeaderContainer = styled.div`
   font-weight: bold;
   background-color: rgb(7, 10, 50);
   color: white;
+  transition: margin-right 0.3s ease; /* Transition effect for content margin */
+  margin-right: ${({ isVisible }) => (isVisible ? '440px' : '0')};
 `;
 
 const HeaderLeft = styled.div`
@@ -105,7 +107,7 @@ const DropdownItem = styled.a`
   }
 `;
 
-const Header = () => {
+const Header = ({ width }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalType, setModalType] = useState(null); // Add state for modal type
   const dropdownRef = useRef(null);
@@ -144,7 +146,7 @@ const Header = () => {
   }, [dropdownRef]);
 
   return (
-    <HeaderContainer>
+    <HeaderContainer width={width}>
       <HeaderLeft>
         <HeaderTitle>Mahafez</HeaderTitle>
       </HeaderLeft>
