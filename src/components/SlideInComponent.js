@@ -18,9 +18,9 @@ const Container = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  width: 400px;
+  width: 280px;
   height: 100vh;
-  background-color: #f7f9fc;
+  background-color: grey;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
   padding: 20px;
   display: flex;
@@ -143,7 +143,7 @@ const SlideInComponent = ({ isVisible, onClose }) => {
     const getCurrencyData = async () => {
       setLoading(true);
       try {
-        const data = await fetchCurrencyData();
+        const data = await fetchCurrencyData("AUD", "CAD");
         setCurrencyData(data);
       } catch (err) {
         setError(err.message);

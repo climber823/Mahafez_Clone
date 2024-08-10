@@ -24,11 +24,11 @@ const Container = styled.div`
 
 const HeaderWrapper = styled.div`
   transition: margin-right 0.3s ease;
-  margin-right: ${({ isVisible }) => (isVisible ? '440px' : '0')};
+  margin-right: ${({ isVisible }) => (isVisible ? '320px' : '0')};
 `;
 
 const SidebarWrapper = styled.div`
-  width: 400px;
+  width: 360px;
   background-color: #f8f8f8;
 `;
 
@@ -36,7 +36,7 @@ const ContentWrapper = styled.div`
   flex-grow: 1;
   border-right: 0.6vh solid grey;
   transition: margin-right 0.3s ease;
-  margin-right: ${({ isVisible }) => (isVisible ? '440px' : '0')};
+  margin-right: ${({ isVisible }) => (isVisible ? '320px' : '0')};
   display: flex;
   flex-direction: column;
   overflow: hidden;

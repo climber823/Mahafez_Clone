@@ -6,6 +6,8 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { selectAsset } from '../redux/actions';
 import Dropdown from './Dropdown';
 import forexPairs from './ForexPairs';
+import { fetchCurrencyData } from '../utils/api';
+import { toContainElement } from '@testing-library/jest-dom/matchers';
 
 const SidebarContainer = styled.div`
   width: 100%;
@@ -104,9 +106,8 @@ const Sidebar = () => {
             const apiKey = 'N5DPQO87W3JVK201'; 
             console.log("from_currency", from_currency)
             console.log("to_currency", to_currency)
-            const response = await fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${from_currency}&to_currency=${to_currency}&apikey=${apiKey}`);
-            console.log("response", response.json())
-            // return (response.json())["Realtime Currency Exchange Rate"];
+            const response = await fetchCurrencyData(from_currency, to_currency);
+            return response["Realtime Currency Exchange Rate"];
           } catch (err) {
             // console.error(`Error fetching data for ${pair}:`, err);
             return null;
