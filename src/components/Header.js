@@ -107,7 +107,7 @@ const DropdownItem = styled.a`
   }
 `;
 
-const Header = ({ width }) => {
+const Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [modalType, setModalType] = useState(null); // Add state for modal type
   const dropdownRef = useRef(null);
@@ -146,7 +146,7 @@ const Header = ({ width }) => {
   }, [dropdownRef]);
 
   return (
-    <HeaderContainer width={width}>
+    <HeaderContainer>
       <HeaderLeft>
         <HeaderTitle>Mahafez</HeaderTitle>
       </HeaderLeft>

@@ -22,6 +22,11 @@ const Container = styled.div`
   border-bottom: 0.6vh solid grey;
 `;
 
+const HeaderWrapper = styled.div`
+  transition: margin-right 0.3s ease;
+  margin-right: ${({ isVisible }) => (isVisible ? '440px' : '0')};
+`;
+
 const SidebarWrapper = styled.div`
   width: 400px;
   background-color: #f8f8f8;
@@ -100,7 +105,9 @@ const MainPage = () => {
 
   return (
     <AppContainer>
-      <Header /> {/* Keep Header full-width */}
+      <HeaderWrapper isVisible={isVisible}>
+        <Header /> {/* Keep Header full-width */}
+      </HeaderWrapper>
       <Container>
         <SidebarWrapper>
           <Sidebar />
