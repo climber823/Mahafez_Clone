@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { SELECT_ASSET, LOGIN, LOGOUT } from './actions';
 
 const initialState = {
-  selectedAsset: 'Copper',
+  selectedAsset: 'AUD/USD',
   isLoggedIn: true,
 };
 

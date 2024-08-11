@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "concurrently \"node server/server.js\" \"react-scripts build\"",
+    "build": "react-scripts build",
     "test": "concurrently \"node server/server.js\" \"react-scripts test\"",
     "eject": "concurrently \"node server/server.js\" \"react-scripts eject\""
   },
