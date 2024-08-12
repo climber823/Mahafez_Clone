@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faKey, faUser, faLanguage } from '@fortawesome/free-solid-svg-icons';
+
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -22,9 +25,12 @@ const ModalContainer = styled.div`
   max-width: 600px;
   margin-bottom: 50vh;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  @media (max-width: 768px) {
+    width: 80%;
+  }
 `;
 
-const ModalTitle = styled.h2`
+const ModalTitle = styled.h5`
   margin-top: 0;
   color: white;
 `;
@@ -41,7 +47,7 @@ const ModalCloseButton = styled.button`
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   float: right;
 
   &:hover {
@@ -63,7 +69,7 @@ const InputField = styled.input`
   margin-bottom: 15px;
   width: 100%;
   max-width: 400px;
-  font-size: 16px;
+  font-size: 14px;
 
   &::placeholder {
     color: #999;
@@ -83,7 +89,7 @@ const ContinueButton = styled.button`
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
 
   &:hover {
     background: #218838;
@@ -97,12 +103,18 @@ const CloseButton = styled.button`
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
 
   &:hover {
     background: #0056b3;
   }
 `;
+
+const PersonalDetails = styled.div`
+  p {
+    margin-bottom: 2px;
+  }
+`
 
 export const ChangePasswordContent = ({ onClose }) => (
   <FormContainer>
@@ -116,12 +128,24 @@ export const ChangePasswordContent = ({ onClose }) => (
 );
 
 export const PersonalDetailsContent = () => (
-  <div>
-    <p>First Name: أحمد شعلان</p>
-    <p>Last Name: حسن</p>
-    <p>Email: alhdydyabwshhdalhdydy@gmail.com</p>
-    <p>Phone Number: 9647738449970</p>
-  </div>
+  <PersonalDetails>
+    <p className='row'>
+      <p className='col-4'>First Name</p>
+      <p className='col-8'>Dare</p>
+    </p>
+    <p className='row'>
+      <p className='col-4'>Last Name</p>
+      <p className='col-8'>Dev</p>
+    </p>
+    <p className='row'>
+      <p className='col-4'>Email</p>
+      <p className='col-8'>orestzelisko49@gmail.com</p>
+    </p>
+    <p className='row'>
+      <p className='col-4'>Phone Number</p>
+      <p className='col-8'>9647738449970</p>
+    </p>
+  </PersonalDetails>
 );
 
 export const WithdrawalRequestContent = () => (
@@ -133,7 +157,13 @@ export const WithdrawalRequestContent = () => (
 export const Modal = ({ title, children, onClose }) => (
   <ModalOverlay>
     <ModalContainer>
-      <ModalTitle>{title}</ModalTitle>
+      <ModalTitle>
+        { title == "Change your password" && <FontAwesomeIcon icon={faKey} aria-hidden="true" /> }
+        { title == "Personal Details" && <FontAwesomeIcon icon={faUser} aria-hidden="true" /> }
+        { title == "Interface Language" && <FontAwesomeIcon icon={faLanguage} aria-hidden="true" /> }
+        {" "}
+        {title}
+      </ModalTitle>
       <ModalContent>{children}</ModalContent>
       {
         title == "Change your password" && 

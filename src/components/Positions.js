@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
   background-color: #1a1a2e;
   border-radius: 8px;
+  overflow-x: auto;
 `;
 
 const Tabs = styled.div`

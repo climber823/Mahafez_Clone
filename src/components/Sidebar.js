@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import axios from 'axios';
 import { FaInfoCircle } from 'react-icons/fa';
 import { selectAsset } from '../redux/actions';
 import Dropdown from './Dropdown';
 import forexPairs from './ForexPairs';
-import { fetchCurrencyData } from '../utils/api';
-import { toContainElement } from '@testing-library/jest-dom/matchers';
+import { subscribeToForex, closeSocket } from '../utils/websocket';
 
 const SidebarContainer = styled.div`
   width: 100%;
   background-color: #131a33;
   color: #fff;
   padding: 10px;
-  height: 94.5vh;
+  height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
   border-left: 0.6vh grey solid;
   border-right: 0.6vh grey solid;
+  @media (max-width: 768px) {
+    height: 60vh;
+  }
 `;
 
 const SearchBox = styled.div`
@@ -92,64 +93,33 @@ const Sidebar = () => {
   }
 
   useEffect(() => {
-    const fetchForexData = async () => {
-      try {
-        const category = getCategory(selectedCategory);
-        const pairs = forexPairs[category] || forexPairs.all;
+    const fetchForexData = () => {
+      const category = getCategory(selectedCategory);
+      const pairs = forexPairs[category] || forexPairs.all;
 
-        const baseCurrencies = Array.from(new Set(pairs.map(pair => pair.split('/')[0])));
-        const forexDataPromises = pairs.map(async (pair) => {
-          try {
-            // const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
-            const from_currency = pair.split('/')[0]
-            const to_currency = pair.split('/')[1] ? pair.split('/')[1] : "USD"
-            const apiKey = 'N5DPQO87W3JVK201'; 
-            console.log("from_currency", from_currency)
-            console.log("to_currency", to_currency)
-            const response = await fetchCurrencyData(from_currency, to_currency);
-            return response["Realtime Currency Exchange Rate"];
-          } catch (err) {
-            // console.error(`Error fetching data for ${pair}:`, err);
-            return null;
-          }
+      // Subscribe to WebSocket and update data
+      subscribeToForex((newData) => {
+        const formattedData = pairs.map(pair => {
+          const [base, target] = pair.split('/');
+          const priceData = newData.prices.find(p => p.instrument === pair);
+          return {
+            asset: pair,
+            buy: priceData ? priceData.bid : 'N/A',
+            sell: priceData ? priceData.ask : 'N/A',
+            spread: priceData ? (priceData.ask - priceData.bid).toFixed(5) : 'N/A'
+          };
         });
-
-        // const exchangeRates = await Promise.all(forexDataPromises);
-
-        // console.log("forexDataPromises", forexDataPromises)
-
-        // const buyMap = {};
-        // const sellMap = {};
-        // exchangeRates.forEach(rate => {
-        //   if (rate) {
-        //     buyMap[rate["1. From_Currency Code"]] = rate["9. Ask Price"];
-        //     sellMap[rate["1. From_Currency Code"]] = rate["8. Bid Price"]
-        //   }
-        // });
-
-        // const forexData = pairs.map((pair) => {
-        //   const [base, target] = pair.split('/');
-        //   const buy = buyMap[base] ? buyMap[base] : null;
-        //   const sell = sellMap[base] ? sellMap[base] : null;
-
-        //   return {
-        //     asset: pair,
-        //     buy: buy ? buy.toFixed(5) : "null",
-        //     sell: sell ? sell.toFixed(5) : "null",
-        //     spread: buy && sell ? (sell - buy).toFixed(1) : "null"
-        //   };
-        // });
-
-        // setData(forexData);
+        setData(formattedData);
         setError(''); // Clear error if data is fetched successfully
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setData([]); // Clear existing data
-        setError('Failed to fetch data. Please try again later.');
-      }
+      });
     };
 
     fetchForexData();
+
+    return () => {
+      // Clean up WebSocket connection
+      closeSocket();
+    };
   }, [selectedCategory]);
 
   const filteredData = data.filter(row => row.asset.toLowerCase().includes(searchQuery.toLowerCase()));

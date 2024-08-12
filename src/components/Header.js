@@ -2,21 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Modal, ChangePasswordContent, PersonalDetailsContent, WithdrawalRequestContent } from './Modal'; // Import the Modal component
 import { useDispatch } from 'react-redux';
-import { logout } from '../redux/actions';
+import { logout } from '../redux/actions';  
 
 const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 0.6vh solid grey;
-  height: 4.4vh;
-  padding: 0px 1vw;
+  padding: 10px 10px;
+  padding-left: 10px;
   font-size: 14px;
   font-weight: bold;
   background-color: rgb(7, 10, 50);
   color: white;
   transition: margin-right 0.3s ease; /* Transition effect for content margin */
   margin-right: ${({ isVisible }) => (isVisible ? '440px' : '0')};
+  @media (max-width: 768px) {
+    transition: padding-bottom 0.3s ease;
+    padding-bottom: ${({ dropdownVisible }) => (dropdownVisible ? '458px' : '10px')};
+  }
 `;
 
 const HeaderLeft = styled.div`
@@ -24,10 +28,12 @@ const HeaderLeft = styled.div`
 `;
 
 const HeaderCenter = styled.div`
-  flex: 2;
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const HeaderRight = styled.div`
@@ -39,6 +45,7 @@ const HeaderRight = styled.div`
 const HeaderTitle = styled.span`
   font-size: 18px;
   font-weight: bold;
+  padding-left: 10px;
 `;
 
 const HeaderItem = styled.span`
@@ -80,12 +87,15 @@ const DropdownContent = styled.div`
   display: ${({ visible }) => (visible ? 'block' : 'none')};
   position: absolute;
   background-color: rgb(7, 10, 50);
-  width: 100%; /* Make dropdown match the width of Welcome */
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   right: 0;
-  margin-top: 15px;
+  margin-top: 5px;
   overflow: hidden;
+  @media (max-width: 768px) {
+    width: 100vw;
+    padding-left: 16px;
+  }
 `;
 
 const DropdownItem = styled.a`
@@ -107,18 +117,18 @@ const DropdownItem = styled.a`
   }
 `;
 
-const Header = () => {
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+const Header = ({ dropdownVisible, setDropdownVisible }) => {
   const [modalType, setModalType] = useState(null); // Add state for modal type
   const dropdownRef = useRef(null);
 
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
+  const handleLogout = () => {  
     dispatch(logout());
   };
 
   const toggleDropdown = () => {
+    console.log("????")
     setDropdownVisible(!dropdownVisible);
   };
 
@@ -146,7 +156,7 @@ const Header = () => {
   }, [dropdownRef]);
 
   return (
-    <HeaderContainer>
+    <HeaderContainer dropdownVisible={dropdownVisible}>
       <HeaderLeft>
         <HeaderTitle>Mahafez</HeaderTitle>
       </HeaderLeft>
@@ -164,6 +174,13 @@ const Header = () => {
             Welcome DareDev <ArrowDown />
           </Welcome>
           <DropdownContent visible={dropdownVisible}>
+            <DropdownItem href="#" onClick={() => {}}>P & L: 0.00$</DropdownItem>
+            <DropdownItem href="#" onClick={() => {}}>Open Positions</DropdownItem>
+            <DropdownItem href="#" onClick={() => {}}>Pending Orders</DropdownItem>
+            <DropdownItem href="#" onClick={() => {}}>Closed Positions</DropdownItem>
+            <DropdownItem href="#" onClick={() => {}}>Statements</DropdownItem>
+            <DropdownItem href="#" onClick={() => {}}>Account Summary</DropdownItem>
+            <DropdownItem href="#" onClick={() => {}}>Account Balance</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('changePassword')}>Change your password</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('personalDetails')}>Personal Details</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('withdrawMoney')}>Withdraw Money</DropdownItem>

@@ -12,24 +12,35 @@ const AppContainer = styled.div`
   background-color: #131a33;
   color: white;
   width: 100vw;
+  overflow-x: hidden;
 `;
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   font-size: 12px;
-  width: 100vw !important;
+  width: 100%;
   height: 94.5vh;
   border-bottom: 0.6vh solid grey;
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 `;
 
 const HeaderWrapper = styled.div`
   transition: margin-right 0.3s ease;
   margin-right: ${({ isVisible }) => (isVisible ? '320px' : '0')};
+  @media (max-width: 768px) {
+    margin-right: 0;
+  }
 `;
 
 const SidebarWrapper = styled.div`
-  width: 360px;
+  width: 100%;
   background-color: #f8f8f8;
+  @media (min-width: 768px) {
+    width: 360px;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -40,32 +51,52 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  @media (max-width: 768px) {
+    margin-right: 0;
+  }
 `;
 
 const ChartAnalysisContainer = styled.div`
   display: flex;
+  flex-direction: row;
   border-bottom: 0.6vh grey solid;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border-left: 0.6vh grey solid;
+  }
 `;
 
 const ChartContainer = styled.div`
-  flex: 0 0 65%;
-  margin: 0px;
+  flex: 0 0 100%;
+  margin: 0;
+  @media (min-width: 768px) {
+    flex: 0 0 65%;
+  }
 `;
 
 const AnalysisContainer = styled.div`
   width: 100%;
   height: 100%;
   border-left: 0.6vh grey solid;
+  @media (min-width: 768px) {
+    border-left: 0.6vh grey solid;
+  }
 `;
 
 const TradingViewWidget = styled.div`
   width: 100%;
   height: 450px;
   border-right: 0.6vh grey solid;
+  @media (max-width: 768px) {
+    height: auto;
+  }
 `;
 
 const TableContainer = styled.div`
   width: 100%;
+  overflow-x: auto;
 `;
 
 const Table = styled.table`
@@ -88,25 +119,34 @@ const TableHeader = styled.th`
 `;
 
 const SidebarButton = styled.button`
-  position: absolute;
+  position: fixed;
   top: 20px;
   left: 20px;
   padding: 10px;
   cursor: pointer;
+  z-index: 10;
+  @media (min-width: 768px) {
+    display: none;
+  }
 `;
 
 // Main Component
 const MainPage = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
 
+  const menuVisibility = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
   return (
     <AppContainer>
       <HeaderWrapper isVisible={isVisible}>
-        <Header /> {/* Keep Header full-width */}
+        <Header dropdownVisible={dropdownVisible} setDropdownVisible={menuVisibility}/> {/* Keep Header full-width */}
       </HeaderWrapper>
       <Container>
         <SidebarWrapper>
@@ -125,9 +165,9 @@ const MainPage = () => {
         </ContentWrapper>
         {isVisible && <SlideInComponent isVisible={isVisible} onClose={toggleVisibility} />}
       </Container>
-      <SidebarButton onClick={toggleVisibility}>
+      {/* <SidebarButton onClick={toggleVisibility}>
         {isVisible ? 'Hide' : 'Show'} Asset
-      </SidebarButton>
+      </SidebarButton> */}
     </AppContainer>
   );
 };
