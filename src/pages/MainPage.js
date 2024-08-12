@@ -12,18 +12,25 @@ const AppContainer = styled.div`
   background-color: #131a33;
   color: white;
   width: 100vw;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: scroll;
+  scrollbar-width: none;
+  border-bottom: 0.6vh solid grey;
+  @media (max-width: 768px) {
+    border: 0.6vh solid grey;
+  }
 `;
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   font-size: 12px;
   width: 100%;
-  height: 94.5vh;
-  border-bottom: 0.6vh solid grey;
-  @media (min-width: 768px) {
-    flex-direction: row;
+  height: 100%;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    border-top: 0.6vh solid grey;
   }
 `;
 
@@ -36,10 +43,14 @@ const HeaderWrapper = styled.div`
 `;
 
 const SidebarWrapper = styled.div`
-  width: 100%;
+  width: 360px;
   background-color: #f8f8f8;
-  @media (min-width: 768px) {
-    width: 360px;
+  border-left: 0.6vh grey solid;
+  border-right: 0.6vh grey solid;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    border: none;
   }
 `;
 
@@ -50,9 +61,9 @@ const ContentWrapper = styled.div`
   margin-right: ${({ isVisible }) => (isVisible ? '320px' : '0')};
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   @media (max-width: 768px) {
     margin-right: 0;
+    border: none;
   }
 `;
 
@@ -63,8 +74,7 @@ const ChartAnalysisContainer = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     width: 100%;
-    height: 100%;
-    border-left: 0.6vh grey solid;
+    height: 40vh;
   }
 `;
 
@@ -78,16 +88,14 @@ const ChartContainer = styled.div`
 
 const AnalysisContainer = styled.div`
   width: 100%;
-  height: 100%;
   border-left: 0.6vh grey solid;
-  @media (min-width: 768px) {
-    border-left: 0.6vh grey solid;
+  @media (max-width: 768px) {
+    border: none;
   }
 `;
 
 const TradingViewWidget = styled.div`
   width: 100%;
-  height: 450px;
   border-right: 0.6vh grey solid;
   @media (max-width: 768px) {
     height: auto;

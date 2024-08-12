@@ -19,7 +19,10 @@ const Container = styled.div`
   top: 0;
   right: 0;
   width: 320px;
-  height: 100vh;
+  height: 100%;
+  padding-bottom: 20px;
+  overflow: scroll;
+  scrollbar-width: none;
   background-color: #f5f5f5;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
   display: flex;

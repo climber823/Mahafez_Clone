@@ -18,6 +18,7 @@ const HeaderContainer = styled.div`
   transition: margin-right 0.3s ease; /* Transition effect for content margin */
   margin-right: ${({ isVisible }) => (isVisible ? '440px' : '0')};
   @media (max-width: 768px) {
+    border: none;
     transition: padding-bottom 0.3s ease;
     padding-bottom: ${({ dropdownVisible }) => (dropdownVisible ? '458px' : '10px')};
   }
@@ -128,7 +129,6 @@ const Header = ({ dropdownVisible, setDropdownVisible }) => {
   };
 
   const toggleDropdown = () => {
-    console.log("????")
     setDropdownVisible(!dropdownVisible);
   };
 
@@ -145,7 +145,7 @@ const Header = ({ dropdownVisible, setDropdownVisible }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownVisible(false);
+        // setDropdownVisible(false);
       }
     };
 

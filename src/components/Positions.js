@@ -5,6 +5,9 @@ const Container = styled.div`
   background-color: #1a1a2e;
   border-radius: 8px;
   overflow-x: auto;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const Tabs = styled.div`

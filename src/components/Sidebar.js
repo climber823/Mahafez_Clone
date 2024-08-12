@@ -9,14 +9,12 @@ import { subscribeToForex, closeSocket } from '../utils/websocket';
 
 const SidebarContainer = styled.div`
   width: 100%;
+  height: 100%;
   background-color: #131a33;
   color: #fff;
   padding: 10px;
-  height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
-  border-left: 0.6vh grey solid;
-  border-right: 0.6vh grey solid;
   @media (max-width: 768px) {
     height: 60vh;
   }
