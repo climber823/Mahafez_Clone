@@ -16,7 +16,7 @@ const SidebarContainer = styled.div`
   box-sizing: border-box;
   overflow-y: auto;
   @media (max-width: 768px) {
-    height: 60vh;
+    height: 54vh;
   }
 `;
 

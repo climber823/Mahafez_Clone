@@ -148,6 +148,36 @@ export const PersonalDetailsContent = () => (
   </PersonalDetails>
 );
 
+
+export const AccountBalanceContent = () => (
+  <PersonalDetails>
+    <p className='row'>
+      <p className='col-7'>P & L</p>
+      <p className='col-5'>0.00$</p>
+    </p>
+    <p className='row'>
+      <p className='col-7'>Balance</p>
+      <p className='col-5'>1.89$</p>
+    </p>
+    <p className='row'>
+      <p className='col-7'>Equity</p>
+      <p className='col-5'>1.89$</p>
+    </p>
+    <p className='row'>
+      <p className='col-7'>Free Margin</p>
+      <p className='col-5'>1.89$</p>
+    </p>
+    <p className='row'>
+      <p className='col-7'>Used Margin</p>
+      <p className='col-5'>0.00$</p>
+    </p>
+    <p className='row'>
+      <p className='col-7'>Margin Level</p>
+      <p className='col-5'>0.00%</p>
+    </p>
+  </PersonalDetails>
+);
+
 export const WithdrawalRequestContent = () => (
   <div>
     <p>You don't have enough margin for withdrawal</p>

@@ -90,6 +90,7 @@ const AnalysisContainer = styled.div`
   width: 100%;
   border-left: 0.6vh grey solid;
   @media (max-width: 768px) {
+    display: none;
     border: none;
   }
 `;

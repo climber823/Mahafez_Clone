@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { Modal, ChangePasswordContent, PersonalDetailsContent, WithdrawalRequestContent } from './Modal'; // Import the Modal component
+import { Modal, ChangePasswordContent, PersonalDetailsContent, WithdrawalRequestContent, AccountBalanceContent } from './Modal'; // Import the Modal component
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/actions';  
 
@@ -20,7 +20,7 @@ const HeaderContainer = styled.div`
   @media (max-width: 768px) {
     border: none;
     transition: padding-bottom 0.3s ease;
-    padding-bottom: ${({ dropdownVisible }) => (dropdownVisible ? '458px' : '10px')};
+    padding-bottom: ${({ dropdownVisible }) => (dropdownVisible ? '230px' : '10px')};
   }
 `;
 
@@ -174,14 +174,8 @@ const Header = ({ dropdownVisible, setDropdownVisible }) => {
             Welcome DareDev <ArrowDown />
           </Welcome>
           <DropdownContent visible={dropdownVisible}>
-            <DropdownItem href="#" onClick={() => {}}>P & L: 0.00$</DropdownItem>
-            <DropdownItem href="#" onClick={() => {}}>Open Positions</DropdownItem>
-            <DropdownItem href="#" onClick={() => {}}>Pending Orders</DropdownItem>
-            <DropdownItem href="#" onClick={() => {}}>Closed Positions</DropdownItem>
-            <DropdownItem href="#" onClick={() => {}}>Statements</DropdownItem>
-            <DropdownItem href="#" onClick={() => {}}>Account Summary</DropdownItem>
-            <DropdownItem href="#" onClick={() => {}}>Account Balance</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('changePassword')}>Change your password</DropdownItem>
+            <DropdownItem href="#" onClick={() => openModal('accountBalance')}>Account Balance</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('personalDetails')}>Personal Details</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('withdrawMoney')}>Withdraw Money</DropdownItem>
             <DropdownItem href="#" onClick={() => openModal('language')}>Language</DropdownItem>
@@ -194,6 +188,7 @@ const Header = ({ dropdownVisible, setDropdownVisible }) => {
         <Modal
           title={
             modalType === 'changePassword' ? 'Change your password' :
+            modalType === 'accountBalance' ? 'Account Balance' :
             modalType === 'personalDetails' ? 'Personal Details' :
             modalType === 'withdrawMoney' ? 'Withdrawal Request' :
             modalType === 'language' ? 'Interface Language' :
@@ -202,6 +197,7 @@ const Header = ({ dropdownVisible, setDropdownVisible }) => {
           onClose={closeModal}
         >
           {modalType === 'changePassword' && <ChangePasswordContent />}
+          {modalType === 'accountBalance' && <AccountBalanceContent />}
           {modalType === 'personalDetails' && <PersonalDetailsContent />}
           {modalType === 'withdrawMoney' && <WithdrawalRequestContent />}
           {modalType === 'language' && <p>English</p>}

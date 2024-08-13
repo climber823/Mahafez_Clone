@@ -3,10 +3,10 @@ import styled from "styled-components";
 
 const Container = styled.div`
   background-color: #1a1a2e;
-  border-radius: 8px;
+  border-radius: 0px;
   overflow-x: auto;
   @media (max-width: 768px) {
-    display: none;
+    height: 99vh;
   }
 `;
 
@@ -23,6 +23,10 @@ const TabButton = styled.button`
 
   &:hover {
     background-color: #0f3460;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 10px;
   }
 `;
 
