@@ -3,6 +3,11 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from 'react-redux';
 
 const Positions = () => {
+  const [createdFrom, setCreatedFrom] = useState("");
+  const [createdUntil, setCreatedUntil] = useState("");
+  const [closedFrom, setClosedFrom] = useState("");
+  const [closedUntil, setClosedUntil] = useState("");
+
   const [activeTab, setActiveTab] = useState("closedPositions");
   const tableInfo = useSelector(state => state.auth.tableInfo);
 
@@ -69,43 +74,94 @@ const Positions = () => {
           </Table>
         );
       case "closedPositions":
+
+        const filteredClosedPositions = tableInfo.closedPositions.filter((data) => {
+          const openTime = new Date(data.open_time);
+          const closingDate = new Date(data.closing_date);
+
+          console.log(openTime, new Date(createdUntil))
+      
+          const isCreatedFromValid = createdFrom ? openTime >= new Date(createdFrom) : true;
+          const isCreatedUntilValid = createdUntil ? openTime <= new Date(createdUntil) : true;
+          const isClosedFromValid = closedFrom ? closingDate >= new Date(closedFrom) : true;
+          const isClosedUntilValid = closedUntil ? closingDate <= new Date(closedUntil) : true;
+      
+          return isCreatedFromValid && isCreatedUntilValid && isClosedFromValid && isClosedUntilValid;
+        });
+
         return (
-          <Table>
-            <Thead>
-              <tr>
-                <Th>Deal Id</Th>
-                <Th>Commission</Th>
-                <Th>Asset</Th>
-                <Th>Direction</Th>
-                <Th>Deal Amount</Th>
-                <Th>Open Time</Th>
-                <Th>Closing Date</Th>
-                <Th>Open Rate</Th>
-                <Th>Close Rate</Th>
-                <Th>P&L ($)</Th>
-              </tr>
-            </Thead>
-            <Tbody>
-              {
-                tableInfo.closedPositions.map((data) => {
-                  return (
-                    <Tr>
-                      <Td>{data.deal_id}</Td>
-                      <Td>{data.commission}</Td>
-                      <Td>{data.asset}</Td>
-                      <Td>{data.direction}</Td>
-                      <Td>{data.deal_amount}</Td>
-                      <Td>{data.open_time}</Td>
-                      <Td>{data.closing_date}</Td>
-                      <Td>{data.open_rate}</Td>
-                      <Td>{data.close_rate}</Td>
-                      <Td>{data.p_l}</Td>
-                    </Tr>
-                  )
-                })
-              }
-            </Tbody>
-          </Table>
+          <ClosedPositions>
+            <div className="row">
+              <div className="col-3">
+                <span>Created From: </span>
+                <input 
+                  type="date" 
+                  value={createdFrom} 
+                  onChange={(e) => setCreatedFrom(e.target.value)} 
+                />
+              </div>
+              <div className="col-3">
+                <span>Created Until: </span>
+                <input 
+                  type="date" 
+                  value={createdUntil} 
+                  onChange={(e) => setCreatedUntil(e.target.value)} 
+                />
+              </div>
+              <div className="col-3">
+                <span>Closed From: </span>
+                <input 
+                  type="date" 
+                  value={closedFrom} 
+                  onChange={(e) => setClosedFrom(e.target.value)} 
+                />
+              </div>
+              <div className="col-3">
+                <span>Closed Until: </span>
+                <input 
+                  type="date" 
+                  value={closedUntil} 
+                  onChange={(e) => setClosedUntil(e.target.value)} 
+                />
+              </div>             
+            </div>
+            <Table>
+              <Thead>
+                <tr>
+                  <Th>Deal Id</Th>
+                  <Th>Commission</Th>
+                  <Th>Asset</Th>
+                  <Th>Direction</Th>
+                  <Th>Deal Amount</Th>
+                  <Th>Open Time</Th>
+                  <Th>Closing Date</Th>
+                  <Th>Open Rate</Th>
+                  <Th>Close Rate</Th>
+                  <Th>P&L ($)</Th>
+                </tr>
+              </Thead>
+              <Tbody>
+                {
+                  filteredClosedPositions.map((data) => {
+                    return (
+                      <Tr>
+                        <Td>{data.deal_id}</Td>
+                        <Td>{data.commission}</Td>
+                        <Td>{data.asset}</Td>
+                        <Td>{data.direction}</Td>
+                        <Td>{data.deal_amount}</Td>
+                        <Td>{data.open_time}</Td>
+                        <Td>{data.closing_date}</Td>
+                        <Td>{data.open_rate}</Td>
+                        <Td>{data.close_rate}</Td>
+                        <Td>{data.p_l}</Td>
+                      </Tr>
+                    )
+                  })
+                }
+              </Tbody>
+            </Table>
+          </ClosedPositions>
         );
       case "statements":
         return (
@@ -266,6 +322,31 @@ const Td = styled.td`
   padding: 10px;
   text-align: center;
   border-bottom: 1px solid #ccc;
+`;
+
+const ClosedPositions = styled.div`
+  input {
+    padding: 5px 20px;
+    margin: 3px 0px;
+    font-size: 13px;
+    border-radius: 7px;
+  }
+  span {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+  @media (max-width: 768px) {
+      input {
+        width: 95%;
+        padding: 1px 3px;
+        font-size: 12px;
+        border-radius: 4px;
+      }
+      span {
+        padding: 0px;
+        font-size: 11px;
+      }
+  }
 `;
 
 export default Positions;
