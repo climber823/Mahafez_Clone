@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey, faUser, faLanguage } from '@fortawesome/free-solid-svg-icons';
@@ -81,22 +81,22 @@ export const Modal = ({ title, children, onClose }) => (
   <ModalOverlay>
     <ModalContainer>
       <ModalTitle>
-        { title == "Change your password" && <FontAwesomeIcon icon={faKey} aria-hidden="true" /> }
-        { title == "Personal Details" && <FontAwesomeIcon icon={faUser} aria-hidden="true" /> }
-        { title == "Interface Language" && <FontAwesomeIcon icon={faLanguage} aria-hidden="true" /> }
+        { title === "Change your password" && <FontAwesomeIcon icon={faKey} aria-hidden="true" /> }
+        { title === "Personal Details" && <FontAwesomeIcon icon={faUser} aria-hidden="true" /> }
+        { title === "Interface Language" && <FontAwesomeIcon icon={faLanguage} aria-hidden="true" /> }
         {" "}
         {title}
       </ModalTitle>
       <ModalContent>{children}</ModalContent>
       {
-        title == "Change your password" && 
+        title === "Change your password" && 
         <ButtonContainer>
           <ContinueButton>Continue</ContinueButton>
           <ModalCloseButton onClick={onClose}>Close</ModalCloseButton>
         </ButtonContainer>
       }
       {
-        title != "Change your password" && 
+        title !== "Change your password" && 
         <ModalCloseButton onClick={onClose}>Close</ModalCloseButton>
       }
     </ModalContainer>
@@ -192,20 +192,6 @@ const ContinueButton = styled.button`
 
   &:hover {
     background: #218838;
-  }
-`;
-
-const CloseButton = styled.button`
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-
-  &:hover {
-    background: #0056b3;
   }
 `;
 

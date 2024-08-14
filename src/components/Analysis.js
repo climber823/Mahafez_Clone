@@ -9,52 +9,6 @@ const AnalysisWidget = styled.div`
   text-align: center;
 `;
 
-const TimeFrameSelector = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
-`;
-
-const TimeFrameButton = styled.button`
-  padding: 5px 10px;
-  background-color: #3a3f47;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  border-radius: 5px;
-
-  &.active {
-    background-color: #626a74;
-  }
-`;
-
-const AnalysisResults = styled.div`
-  margin-top: 20px;
-`;
-
-const Gauge = styled.div`
-  position: relative;
-  width: 200px;
-  height: 100px;
-  border-radius: 100px 100px 0 0;
-  background-color: #3a3f47;
-  margin: auto;
-`;
-
-const GaugeIndicator = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform-origin: bottom center;
-  width: 4px;
-  height: 100%;
-  background-color: #4caf50;
-`;
-
-const AnalysisSummary = styled.div`
-  margin-top: 20px;
-`;
-
 const Analysis = () => {
   const selectedAsset = useSelector(state => state.asset.selectedAsset);
 
