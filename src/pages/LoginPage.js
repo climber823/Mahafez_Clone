@@ -5,9 +5,6 @@ import { useDispatch } from 'react-redux';
 import { login } from '../redux/actions';
 import axios from 'axios';
 
-// const dotenv = require('dotenv');
-// dotenv.config();
-
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -20,7 +17,7 @@ const LoginPage = () => {
   const dispatch = useDispatch();
  
   const handleLogin = async (id, pwd) => {
-    axios.post(`${process.env.SERVER_URL_DEPLOY}/api/auth/login`, {
+    axios.post(`${process.env.REACT_APP_API_URL_DEPLOY}/api/auth/login`, {
     // axios.post(`http://localhost:5000/api/auth/login`, {
       account_id: id, 
       password: pwd
