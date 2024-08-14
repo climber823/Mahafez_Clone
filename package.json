@@ -36,6 +36,8 @@
   "scripts": {
     "start": "concurrently \"node server/server.js\" \"react-scripts start\"",
     "build": "concurrently \"node server/server.js\" \"react-scripts build\"",
+    "client": "react-scripts start",
+    "server": "node server/server.js",
     "test": "concurrently \"node server/server.js\" \"react-scripts test\"",
     "eject": "concurrently \"node server/server.js\" \"react-scripts eject\""
   },
