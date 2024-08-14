@@ -30,7 +30,8 @@ const LoginPage = () => {
       dispatch(login(response.data.user, response.data.tableInfo));
     })
     .catch(error => {
-      console.log(error.response.data.message)
+      console.log(error)
+      // console.log(error.response.data.message)
     });
   };
 

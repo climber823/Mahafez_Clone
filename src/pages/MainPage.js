@@ -95,50 +95,6 @@ const AnalysisContainer = styled.div`
   }
 `;
 
-const TradingViewWidget = styled.div`
-  width: 100%;
-  border-right: 0.6vh grey solid;
-  @media (max-width: 768px) {
-    height: auto;
-  }
-`;
-
-const TableContainer = styled.div`
-  width: 100%;
-  overflow-x: auto;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const TableCell = styled.td`
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-  background-color: #fff;
-`;
-
-const TableHeader = styled.th`
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-  background-color: #f2f2f2;
-`;
-
-const SidebarButton = styled.button`
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  padding: 10px;
-  cursor: pointer;
-  z-index: 10;
-  @media (min-width: 768px) {
-    display: none;
-  }
-`;
-
 // Main Component
 const MainPage = () => {
   const [isVisible, setIsVisible] = useState(true);
