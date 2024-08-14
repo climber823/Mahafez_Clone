@@ -67,10 +67,8 @@ const LoginForm = ({ onLogin  }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle login logic here
-    console.log('Client ID:', clientId);
-    console.log('Password:', password);
     if (clientId && password) {
-      onLogin(); // Call the onLogin prop to indicate successful login
+      onLogin(clientId, password); // Call the onLogin prop to indicate successful login
     }
   };
 

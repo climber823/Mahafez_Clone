@@ -1,8 +1,107 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey, faUser, faLanguage } from '@fortawesome/free-solid-svg-icons';
+
+export const ChangePasswordContent = ({ onClose }) => (
+  <FormContainer>
+    <InputField type="password" placeholder="Current password" />
+    <InputField type="password" placeholder="New Password" />
+  </FormContainer>
+);
+
+export const PersonalDetailsContent = () => {
+  const userInfo = useSelector(state => state.auth.userInfo);
+
+  return (
+    <PersonalDetails>
+      <p className='row'>
+        <p className='col-4'>First Name</p>
+        <p className='col-8'>{userInfo.firstname}</p>
+      </p>
+      <p className='row'>
+        <p className='col-4'>Last Name</p>
+        <p className='col-8'>{userInfo.lastname}</p>
+      </p>
+      <p className='row'>
+        <p className='col-4'>Email</p>
+        <p className='col-8'>{userInfo.email}</p>
+      </p>
+      <p className='row'>
+        <p className='col-4'>Phone Number</p>
+        <p className='col-8'>{userInfo.phone}</p>
+      </p>
+    </PersonalDetails>
+  )
+};
+
+
+export const AccountBalanceContent = () => {
+  const userInfo = useSelector(state => state.auth.userInfo);
+
+  return (
+    <PersonalDetails>
+      <p className='row'>
+        <p className='col-7'>P & L</p>
+        <p className='col-5'>{userInfo.p_l}$</p>
+      </p>
+      <p className='row'>
+        <p className='col-7'>Balance</p>
+        <p className='col-5'>{userInfo.balance}$</p>
+      </p>
+      <p className='row'>
+        <p className='col-7'>Equity</p>
+        <p className='col-5'>{userInfo.equity}$</p>
+      </p>
+      <p className='row'>
+        <p className='col-7'>Free Margin</p>
+        <p className='col-5'>{userInfo.free_margin}$</p>
+      </p>
+      <p className='row'>
+        <p className='col-7'>Used Margin</p>
+        <p className='col-5'>{userInfo.used_margin}$</p>
+      </p>
+      <p className='row'>
+        <p className='col-7'>Margin Level</p>
+        <p className='col-5'>{userInfo.margin_level}%</p>
+      </p>
+    </PersonalDetails>
+  )
+};
+
+export const WithdrawalRequestContent = () => (
+  <div>
+    <p>You don't have enough margin for withdrawal</p>
+  </div>
+);
+
+export const Modal = ({ title, children, onClose }) => (
+  <ModalOverlay>
+    <ModalContainer>
+      <ModalTitle>
+        { title == "Change your password" && <FontAwesomeIcon icon={faKey} aria-hidden="true" /> }
+        { title == "Personal Details" && <FontAwesomeIcon icon={faUser} aria-hidden="true" /> }
+        { title == "Interface Language" && <FontAwesomeIcon icon={faLanguage} aria-hidden="true" /> }
+        {" "}
+        {title}
+      </ModalTitle>
+      <ModalContent>{children}</ModalContent>
+      {
+        title == "Change your password" && 
+        <ButtonContainer>
+          <ContinueButton>Continue</ContinueButton>
+          <ModalCloseButton onClick={onClose}>Close</ModalCloseButton>
+        </ButtonContainer>
+      }
+      {
+        title != "Change your password" && 
+        <ModalCloseButton onClick={onClose}>Close</ModalCloseButton>
+      }
+    </ModalContainer>
+  </ModalOverlay>
+);
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -115,97 +214,3 @@ const PersonalDetails = styled.div`
     margin-bottom: 2px;
   }
 `
-
-export const ChangePasswordContent = ({ onClose }) => (
-  <FormContainer>
-    <InputField type="password" placeholder="Current password" />
-    <InputField type="password" placeholder="New Password" />
-    {/* <ButtonContainer>
-      <ContinueButton>Continue</ContinueButton>
-      <CloseButton onClick={onClose}>Close</CloseButton>
-    </ButtonContainer> */}
-  </FormContainer>
-);
-
-export const PersonalDetailsContent = () => (
-  <PersonalDetails>
-    <p className='row'>
-      <p className='col-4'>First Name</p>
-      <p className='col-8'>Dare</p>
-    </p>
-    <p className='row'>
-      <p className='col-4'>Last Name</p>
-      <p className='col-8'>Dev</p>
-    </p>
-    <p className='row'>
-      <p className='col-4'>Email</p>
-      <p className='col-8'>orestzelisko49@gmail.com</p>
-    </p>
-    <p className='row'>
-      <p className='col-4'>Phone Number</p>
-      <p className='col-8'>9647738449970</p>
-    </p>
-  </PersonalDetails>
-);
-
-
-export const AccountBalanceContent = () => (
-  <PersonalDetails>
-    <p className='row'>
-      <p className='col-7'>P & L</p>
-      <p className='col-5'>0.00$</p>
-    </p>
-    <p className='row'>
-      <p className='col-7'>Balance</p>
-      <p className='col-5'>1.89$</p>
-    </p>
-    <p className='row'>
-      <p className='col-7'>Equity</p>
-      <p className='col-5'>1.89$</p>
-    </p>
-    <p className='row'>
-      <p className='col-7'>Free Margin</p>
-      <p className='col-5'>1.89$</p>
-    </p>
-    <p className='row'>
-      <p className='col-7'>Used Margin</p>
-      <p className='col-5'>0.00$</p>
-    </p>
-    <p className='row'>
-      <p className='col-7'>Margin Level</p>
-      <p className='col-5'>0.00%</p>
-    </p>
-  </PersonalDetails>
-);
-
-export const WithdrawalRequestContent = () => (
-  <div>
-    <p>You don't have enough margin for withdrawal</p>
-  </div>
-);
-
-export const Modal = ({ title, children, onClose }) => (
-  <ModalOverlay>
-    <ModalContainer>
-      <ModalTitle>
-        { title == "Change your password" && <FontAwesomeIcon icon={faKey} aria-hidden="true" /> }
-        { title == "Personal Details" && <FontAwesomeIcon icon={faUser} aria-hidden="true" /> }
-        { title == "Interface Language" && <FontAwesomeIcon icon={faLanguage} aria-hidden="true" /> }
-        {" "}
-        {title}
-      </ModalTitle>
-      <ModalContent>{children}</ModalContent>
-      {
-        title == "Change your password" && 
-        <ButtonContainer>
-          <ContinueButton>Continue</ContinueButton>
-          <ModalCloseButton onClick={onClose}>Close</ModalCloseButton>
-        </ButtonContainer>
-      }
-      {
-        title != "Change your password" && 
-        <ModalCloseButton onClick={onClose}>Close</ModalCloseButton>
-      }
-    </ModalContainer>
-  </ModalOverlay>
-);

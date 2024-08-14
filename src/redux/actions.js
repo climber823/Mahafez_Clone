@@ -8,7 +8,16 @@ export const selectAsset = (asset) => ({
 });
 
 // store.js (add this at the top)
-export const login = () => ({ type: LOGIN });
+// export const login = () => ({ type: LOGIN });
+export const login = (user, tableInfo) => {
+  return { 
+    type: LOGIN ,
+    payload: {
+      user,
+      tableInfo,
+    }
+  }
+}
 
 // store.js (add this at the top)
 export const logout = () => ({ type: LOGOUT });

@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@walletconnect/client": "^1.8.0",
     "axios": "^1.7.3",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
@@ -18,6 +19,7 @@
     "ethers": "^6.13.2",
     "express": "^4.19.2",
     "font-awesome": "^4.7.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -32,8 +34,8 @@
     "web3": "^4.11.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "concurrently \"nodemon server/server.js\" \"react-scripts start\"",
+    "build": "concurrently \"node server/server.js\" \"react-scripts build\"",
     "test": "concurrently \"node server/server.js\" \"react-scripts test\"",
     "eject": "concurrently \"node server/server.js\" \"react-scripts eject\""
   },

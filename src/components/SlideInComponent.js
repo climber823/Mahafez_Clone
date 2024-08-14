@@ -82,7 +82,7 @@ const CurrencyImageBase = styled.img`
   left: 0px;
   border-radius: 50%;
   position: absolute;
-  z-index: ${props => (props.isBaseCurrency ? 2 : 1)};
+  z-index: 2;
 `;
 
 const CurrencyImageQuote = styled.img`
@@ -91,7 +91,7 @@ const CurrencyImageQuote = styled.img`
   left: 20px;
   border-radius: 50%;
   position: absolute;
-  z-index: ${props => (props.isBaseCurrency ? 2 : 1)};
+  z-index: 1;
 `;
 
 const Title = styled.h2`
@@ -302,7 +302,7 @@ const SlideInComponent = ({ isVisible, onClose }) => {
         <BodyHeader>
           <FlagContainer>
             <CurrencyImageContainer>
-              <CurrencyImageBase src={imageUrl} alt={`${baseCurrency} Flag`} isBaseCurrency />
+              <CurrencyImageBase src={imageUrl} alt={`${baseCurrency} Flag`} />
               <CurrencyImageQuote src={imageUrl2} alt={`${quoteCurrency} Flag`} />
             </CurrencyImageContainer>
             <SecondTitleContainer>

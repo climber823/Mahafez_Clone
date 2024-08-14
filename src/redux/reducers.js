@@ -3,7 +3,9 @@ import { SELECT_ASSET, LOGIN, LOGOUT } from './actions';
 
 const initialState = {
   selectedAsset: 'AUD/USD',
-  isLoggedIn: true,
+  isLoggedIn: false,
+  userInfo: {},
+  tableInfo: {},
 };
 
 const assetReducer = (state = initialState, action) => {
@@ -20,11 +22,23 @@ const assetReducer = (state = initialState, action) => {
 };
 
 const authReducer = (state = initialState, action) => {
+
   switch (action.type) {
     case LOGIN:
-      return { ...state, isLoggedIn: true };
+      console.log(action.payload)
+      return { 
+        ...state, 
+        isLoggedIn: true,
+        userInfo: action.payload.user,
+        tableInfo: action.payload.tableInfo,
+      };
     case LOGOUT:
-      return { ...state, isLoggedIn: false };
+      return { 
+        ...state, 
+        isLoggedIn: false,
+        userInfo: {},
+        tableInfo: {},
+      };
     default:
       return state;
   }

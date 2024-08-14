@@ -1,8 +1,99 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Modal, ChangePasswordContent, PersonalDetailsContent, WithdrawalRequestContent, AccountBalanceContent } from './Modal'; // Import the Modal component
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/actions';  
+
+const Header = ({ dropdownVisible, setDropdownVisible }) => {
+  const userInfo = useSelector(state => state.auth.userInfo);
+
+  const [modalType, setModalType] = useState(null); // Add state for modal type
+  const dropdownRef = useRef(null);
+
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {  
+    dispatch(logout());
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const openModal = (type) => {
+    setModalType(type);
+    setDropdownVisible(false); // Close dropdown when modal is opened
+  };
+
+  const closeModal = () => {
+    setModalType(null);
+  };
+
+  // Handle clicks outside the dropdown to close it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        // setDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  return (
+    <HeaderContainer dropdownVisible={dropdownVisible}>
+      <HeaderLeft>
+        <HeaderTitle>Mahafez</HeaderTitle>
+      </HeaderLeft>
+      <HeaderCenter>
+        <HeaderItem>P&L ($): <NegativeValue>{userInfo.p_l}</NegativeValue></HeaderItem>
+        <HeaderItem>Balance: <Value>{userInfo.balance}</Value></HeaderItem>
+        <HeaderItem>Equity: <Value>{userInfo.equity}</Value></HeaderItem>
+        <HeaderItem>Free Margin: <Value>{userInfo.free_margin}</Value></HeaderItem>
+        <HeaderItem>Used Margin: <Value>{userInfo.used_margin}</Value></HeaderItem>
+        <HeaderItem>Margin Level: <Value>{userInfo.margin_level}</Value></HeaderItem>
+      </HeaderCenter>
+      <HeaderRight>
+        <Dropdown ref={dropdownRef}>
+          <Welcome onClick={toggleDropdown}>
+            Welcome {userInfo.firstname} <ArrowDown />
+          </Welcome>
+          <DropdownContent visible={dropdownVisible}>
+            <DropdownItem href="#" onClick={() => openModal('changePassword')}>Change your password</DropdownItem>
+            <DropdownItem href="#" onClick={() => openModal('accountBalance')}>Account Balance</DropdownItem>
+            <DropdownItem href="#" onClick={() => openModal('personalDetails')}>Personal Details</DropdownItem>
+            <DropdownItem href="#" onClick={() => openModal('withdrawMoney')}>Withdraw Money</DropdownItem>
+            <DropdownItem href="#" onClick={() => openModal('language')}>Language</DropdownItem>
+            <DropdownItem href="#" onClick={handleLogout}>Logout</DropdownItem>
+          </DropdownContent>
+        </Dropdown>
+      </HeaderRight>
+
+      {modalType && (
+        <Modal
+          title={
+            modalType === 'changePassword' ? 'Change your password' :
+            modalType === 'accountBalance' ? 'Account Balance' :
+            modalType === 'personalDetails' ? 'Personal Details' :
+            modalType === 'withdrawMoney' ? 'Withdrawal Request' :
+            modalType === 'language' ? 'Interface Language' :
+            'Modal Title'
+          }
+          onClose={closeModal}
+        >
+          {modalType === 'changePassword' && <ChangePasswordContent />}
+          {modalType === 'accountBalance' && <AccountBalanceContent />}
+          {modalType === 'personalDetails' && <PersonalDetailsContent />}
+          {modalType === 'withdrawMoney' && <WithdrawalRequestContent />}
+          {modalType === 'language' && <p>English</p>}
+        </Modal>
+      )}
+    </HeaderContainer>
+  );
+};
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -117,94 +208,5 @@ const DropdownItem = styled.a`
     border-bottom: none;
   }
 `;
-
-const Header = ({ dropdownVisible, setDropdownVisible }) => {
-  const [modalType, setModalType] = useState(null); // Add state for modal type
-  const dropdownRef = useRef(null);
-
-  const dispatch = useDispatch();
-
-  const handleLogout = () => {  
-    dispatch(logout());
-  };
-
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
-
-  const openModal = (type) => {
-    setModalType(type);
-    setDropdownVisible(false); // Close dropdown when modal is opened
-  };
-
-  const closeModal = () => {
-    setModalType(null);
-  };
-
-  // Handle clicks outside the dropdown to close it
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        // setDropdownVisible(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [dropdownRef]);
-
-  return (
-    <HeaderContainer dropdownVisible={dropdownVisible}>
-      <HeaderLeft>
-        <HeaderTitle>Mahafez</HeaderTitle>
-      </HeaderLeft>
-      <HeaderCenter>
-        <HeaderItem>P&L ($): <NegativeValue>0.00$</NegativeValue></HeaderItem>
-        <HeaderItem>Balance: <Value>1.89$</Value></HeaderItem>
-        <HeaderItem>Equity: <Value>1.89$</Value></HeaderItem>
-        <HeaderItem>Free Margin: <Value>1.89$</Value></HeaderItem>
-        <HeaderItem>Used Margin: <Value>0.00$</Value></HeaderItem>
-        <HeaderItem>Margin Level: <Value>0.00%</Value></HeaderItem>
-      </HeaderCenter>
-      <HeaderRight>
-        <Dropdown ref={dropdownRef}>
-          <Welcome onClick={toggleDropdown}>
-            Welcome DareDev <ArrowDown />
-          </Welcome>
-          <DropdownContent visible={dropdownVisible}>
-            <DropdownItem href="#" onClick={() => openModal('changePassword')}>Change your password</DropdownItem>
-            <DropdownItem href="#" onClick={() => openModal('accountBalance')}>Account Balance</DropdownItem>
-            <DropdownItem href="#" onClick={() => openModal('personalDetails')}>Personal Details</DropdownItem>
-            <DropdownItem href="#" onClick={() => openModal('withdrawMoney')}>Withdraw Money</DropdownItem>
-            <DropdownItem href="#" onClick={() => openModal('language')}>Language</DropdownItem>
-            <DropdownItem href="#" onClick={handleLogout}>Logout</DropdownItem>
-          </DropdownContent>
-        </Dropdown>
-      </HeaderRight>
-
-      {modalType && (
-        <Modal
-          title={
-            modalType === 'changePassword' ? 'Change your password' :
-            modalType === 'accountBalance' ? 'Account Balance' :
-            modalType === 'personalDetails' ? 'Personal Details' :
-            modalType === 'withdrawMoney' ? 'Withdrawal Request' :
-            modalType === 'language' ? 'Interface Language' :
-            'Modal Title'
-          }
-          onClose={closeModal}
-        >
-          {modalType === 'changePassword' && <ChangePasswordContent />}
-          {modalType === 'accountBalance' && <AccountBalanceContent />}
-          {modalType === 'personalDetails' && <PersonalDetailsContent />}
-          {modalType === 'withdrawMoney' && <WithdrawalRequestContent />}
-          {modalType === 'language' && <p>English</p>}
-        </Modal>
-      )}
-    </HeaderContainer>
-  );
-};
 
 export default Header;

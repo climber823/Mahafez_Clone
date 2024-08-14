@@ -3,6 +3,7 @@ import LoginForm from '../components/LoginForm';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { login } from '../redux/actions';
+import axios from 'axios';
 
 const PageContainer = styled.div`
   display: flex;
@@ -15,8 +16,21 @@ const PageContainer = styled.div`
 const LoginPage = () => {
   const dispatch = useDispatch();
 
-  const handleLogin = () => {
-    dispatch(login());
+  const handleLogin = async (id, pwd) => {
+    axios.post('http://localhost:5000/api/auth/login', {
+      account_id: id, 
+      password: pwd
+    })
+    .then(response => {
+      console.log(response.data);
+      const token = response.data.token;
+      localStorage.setItem('token', token); // Store the token in localStorage
+
+      dispatch(login(response.data.user, response.data.tableInfo));
+    })
+    .catch(error => {
+      console.log(error.response.data.message)
+    });
   };
 
   return (
