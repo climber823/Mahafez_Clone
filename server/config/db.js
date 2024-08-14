@@ -18,7 +18,7 @@ const accountSummaryData = require('../mock/AccountSummaryData');
 
 dotenv.config();
 
-const databaseFeed = async () => {
+const feedData = async () => {
   for (let user of userData) {
     user.password = await bcrypt.hash(user.password, 10);
     const newUser = new Users(user)
@@ -45,18 +45,19 @@ const databaseFeed = async () => {
     const newAccountSummary = new AccountSummaries(accountSummary)
     try { await newAccountSummary.save() } catch(err) {}
   }
+  
+  console.log('Database feeding completed');
 }
 
 const connectDB = async () => {
   try {
-    console.log(process.env.MONGO_URI)
-    await mongoose.connect(process.env.MONGO_URI, {
+    console.log(process.env.MONGO_URI_CLOUD)
+    await mongoose.connect(process.env.MONGO_URI_CLOUD, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     console.log('MongoDB connected');
-    // await databaseFeed();
-    // console.log('Database Feed completed');
+    await feedData();
   } catch (error) {
     console.error(error.message);
     process.exit(1);
