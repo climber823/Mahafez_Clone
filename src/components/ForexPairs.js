@@ -9,7 +9,7 @@ export const forexPairs = {
     // "AUD/USD",
     // "CAD/CHF",
     // "CAD/HKD",
-    // "CAD/JPY",
+    "CAD/JPY",
     "CAD/SGD",
     // "CHF/HKD",
     // "CHF/JPY",
