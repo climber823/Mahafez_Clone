@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import TradingViewWidget from 'react-tradingview-widget';
+import { tradingViewMapping } from './ForexPairs';
 
 // Styled Container
 const WidgetContainer = styled.div`
@@ -18,7 +19,7 @@ const Chart = () => {
   return (
     <WidgetContainer>
       <TradingViewWidget 
-        symbol={selectedAsset.replace("/", "")} 
+        symbol={tradingViewMapping[selectedAsset]} 
         autosize 
         theme="dark" 
       />

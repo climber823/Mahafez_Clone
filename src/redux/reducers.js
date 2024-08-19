@@ -1,19 +1,24 @@
 import { combineReducers } from 'redux';
 import { SELECT_ASSET, LOGIN, LOGOUT } from './actions';
 
-const initialState = {
+const assetInitialState = {
   selectedAsset: 'AUD/USD',
+  assetInfo: {},
+};
+
+const authInitialState = {
   isLoggedIn: false,
   userInfo: {},
   tableInfo: {},
 };
 
-const assetReducer = (state = initialState, action) => {
+const assetReducer = (state = assetInitialState, action) => {
   switch (action.type) {
     case SELECT_ASSET:
       return {
         ...state,
-        selectedAsset: action.payload,
+        selectedAsset: action.payload.asset,
+        assetInfo: action.payload
       };
 
     default:
@@ -21,7 +26,7 @@ const assetReducer = (state = initialState, action) => {
   }
 };
 
-const authReducer = (state = initialState, action) => {
+const authReducer = (state = authInitialState, action) => {
 
   switch (action.type) {
     case LOGIN:

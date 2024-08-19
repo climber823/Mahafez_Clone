@@ -79,8 +79,6 @@ const Positions = () => {
           const openTime = new Date(data.open_time);
           const closingDate = new Date(data.closing_date);
 
-          console.log(openTime, new Date(createdUntil))
-      
           const isCreatedFromValid = createdFrom ? openTime >= new Date(createdFrom) : true;
           const isCreatedUntilValid = createdUntil ? openTime <= new Date(createdUntil) : true;
           const isClosedFromValid = closedFrom ? closingDate >= new Date(closedFrom) : true;

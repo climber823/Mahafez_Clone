@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaInfoCircle } from 'react-icons/fa';
+import { FaDatabase, FaInfoCircle } from 'react-icons/fa';
 import { selectAsset } from '../redux/actions';
 import Dropdown from './Dropdown';
-import forexPairs from './ForexPairs';
-import { subscribeToForex, closeSocket } from '../utils/websocket';
+import { forexPairs, assetMapping } from './ForexPairs';
 
 const SidebarContainer = styled.div`
   width: 100%;
@@ -67,7 +66,7 @@ const ErrorMessage = styled.div`
   margin: 20px 0;
 `;
 
-const Sidebar = () => {
+const Sidebar = ({ setSlideVisible }) => {
   const dispatch = useDispatch();
   const selectedAsset = useSelector(state => state.asset.selectedAsset);
   const [data, setData] = useState([]);
@@ -91,37 +90,52 @@ const Sidebar = () => {
   }
 
   useEffect(() => {
-    const fetchForexData = () => {
-      const category = getCategory(selectedCategory);
-      const pairs = forexPairs[category] || forexPairs.all;
+    const fetchForexData = async () => {
+      try {
+        const category = getCategory(selectedCategory);
+        const pairs = forexPairs[category] || forexPairs.all;
 
-      // Subscribe to WebSocket and update data
-      subscribeToForex((newData) => {
-        const formattedData = pairs.map(pair => {
-          const [base, target] = pair.split('/');
-          const priceData = newData.prices.find(p => p.instrument === pair);
+        console.log(pairs)
+
+        const forexDataPromises = pairs.map(async (pair) => {
+          // forex: https://api.polygon.io/v2/aggs/ticker/C:EURUSD/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
+          // crypto: https://api.polygon.io/v2/aggs/ticker/X:BTCUSD/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
+          // indice: https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
+          // stocks: https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
+          const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${assetMapping[pair]}/prev?adjusted=true&apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R`);
+          const data = await response.json();
+          
+          console.log(assetMapping[pair], data)
+
+          // console.log(data)
+          if( data.resultsCount <= 0 ) return null;
+
           return {
             asset: pair,
-            buy: priceData ? priceData.bid : 'N/A',
-            sell: priceData ? priceData.ask : 'N/A',
-            spread: priceData ? (priceData.ask - priceData.bid).toFixed(5) : 'N/A'
+            buy: data.results[0]?.c.toFixed(5), // Close price (or another suitable field from your API)
+            sell: data.results[0]?.o.toFixed(5), // Open price (or another suitable field from your API)
+            spread: Math.abs(data.results[0]?.c - data.results[0]?.o).toFixed(5), // Example spread calculation
+            volume: data.results[0]?.v,
+            avgPrice: data.results[0]?.vw.toFixed(5),
+            number: data.results[0]?.n,
+            low: data.results[0]?.l,
+            high: data.results[0]?.h,
           };
         });
-        setData(formattedData);
-        setError(''); // Clear error if data is fetched successfully
-      });
+
+        const forexData = await Promise.all(forexDataPromises);
+        const filteredData = forexData.filter(row => row && row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
+        setData(filteredData);
+      } catch (err) {
+        setError('Failed to fetch forex data.');
+      }
     };
 
     fetchForexData();
 
-    return () => {
-      // Clean up WebSocket connection
-      closeSocket();
-    };
   }, [selectedCategory]);
 
-  const filteredData = data.filter(row => row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
-
+  
   return (
     <SidebarContainer>
       <SearchBox>
@@ -150,14 +164,14 @@ const Sidebar = () => {
           </TableRow>
         </TableHead>
         <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((row, index) => (
-              <TableRow key={index} onClick={() => dispatch(selectAsset(row.asset))}>
+          {data.length > 0 ? (
+            data.map((row, index) => (
+              <TableRow key={index} onClick={() => dispatch(selectAsset(row))}>
                 <TableCell>{row.asset}</TableCell>
                 <TableCell>{row.buy}</TableCell>
                 <TableCell>{row.sell}</TableCell>
                 <TableCell>{row.spread}</TableCell>
-                <TableCell>
+                <TableCell onClick={setSlideVisible}>
                   <IconWrapper>
                     <FaInfoCircle />
                   </IconWrapper>

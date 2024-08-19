@@ -97,8 +97,12 @@ const AnalysisContainer = styled.div`
 
 // Main Component
 const MainPage = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const setSlideVisible = () => {
+    setIsVisible(true);
+  };
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -115,7 +119,7 @@ const MainPage = () => {
       </HeaderWrapper>
       <Container>
         <SidebarWrapper>
-          <Sidebar />
+          <Sidebar setSlideVisible={setSlideVisible}/>
         </SidebarWrapper>
         <ContentWrapper isVisible={isVisible}>
           <ChartAnalysisContainer>
