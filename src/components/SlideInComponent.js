@@ -3,12 +3,42 @@ import styled, { keyframes } from 'styled-components';
 import { fetchCurrencyData } from '../utils/api';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { tradingViewMapping, coins } from './ForexPairs';
 
 function getCountryCodeFromCurrency(currencyCode) {
-  if (currencyCode.length === 3) {
+  if (currencyCode?.length === 3) {
     return currencyCode.substring(0, 2);
   }
   return "Unknown";
+}
+
+function extractDetails(ticker) {
+  // Remove the prefix (e.g., "OANDA:", "CRYPTO:")
+  const cleanedTicker = ticker.replace(/^(OANDA:|CRYPTO:)/, "");
+
+  // Determine where the split between base and quote currencies should happen
+  let splitIndex;
+
+  // Check if it's a cryptocurrency or forex pair
+  if (cleanedTicker.length > 6) { // Cryptocurrency tickers usually have a base currency longer than 3 characters
+    splitIndex = cleanedTicker.length - 3; // The last three characters are the quote currency
+  } else {
+    splitIndex = 3; // For forex, the first three characters are the base currency
+  }
+
+  // Extract base and quote currencies
+  const baseCurrency = cleanedTicker.slice(0, splitIndex);
+  const quoteCurrency = cleanedTicker.slice(splitIndex);
+
+  return {
+    base: baseCurrency.toUpperCase(),  // Convert to lowercase
+    quote: quoteCurrency.toUpperCase() // Convert to lowercase
+  };
+}
+
+const getAssetType = (name) => {
+  if(name.includes("OANDA")) return "currency";
+  return "crypto";
 }
 
 const SlideInComponent = ({ isVisible, onClose }) => {
@@ -26,39 +56,34 @@ const SlideInComponent = ({ isVisible, onClose }) => {
     const getCurrencyData = async () => {
       setLoading(true);
       try {
-        console.log(assetInfo)
         if(!assetInfo) return;
-        
-        const [baseCurrency, quoteCurrency] = assetInfo.asset.split('/');
-        const baseCountryCode = getCountryCodeFromCurrency(baseCurrency);
-        const quoteCountryCode = getCountryCodeFromCurrency(quoteCurrency);
-        const imageUrl = `https://s3-symbol-logo.tradingview.com/country/${baseCountryCode}--big.svg`;
+  
+        const { base, quote } = extractDetails(tradingViewMapping[assetInfo.asset])
+        const assetType = getAssetType(tradingViewMapping[assetInfo.asset])
+
+        const baseCountryCode = getCountryCodeFromCurrency(base);
+        const quoteCountryCode = getCountryCodeFromCurrency(quote);
+        let imageUrl = `https://s3-symbol-logo.tradingview.com/country/${baseCountryCode}--big.svg`;
         const imageUrl2 = `https://s3-symbol-logo.tradingview.com/country/${quoteCountryCode}--big.svg`;
+
+        if (assetType == "crypto") {
+          imageUrl = `https://s3-symbol-logo.tradingview.com/crypto/XTVC${base}--big.svg`;
+        }
 
         fetch(`https://openexchangerates.org/api/currencies.json?app_id=3717da8424704e17a4d317187b284c98`)
         .then(response => response.json())
         .then(data => {
-          console.log(data)
-        
-          const currencyPair = assetInfo.asset;
-          const [base, quote] = currencyPair.split('/');
-          const baseFullName = data[base];
+          console.log(base, quote)
+          const baseFullName = data[base] ? data[base] : assetInfo.asset;
           const quoteFullName = data[quote];
           const fullCurrencyPair = `${baseFullName}/${quoteFullName} OANDA`;
-          console.log({
-              ...assetInfo,
-              fullName: fullCurrencyPair,
-              baseCurrency,
-              quoteCurrency,
-              imageUrl,
-              imageUrl2,
-          })
 
           setCurrencyData({
             ...assetInfo,
+            assetType,
             fullName: fullCurrencyPair,
-            baseCurrency,
-            quoteCurrency,
+            base,
+            quote,
             imageUrl,
             imageUrl2,
           });

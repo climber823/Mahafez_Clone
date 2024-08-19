@@ -43,7 +43,7 @@ const HeaderWrapper = styled.div`
 `;
 
 const SidebarWrapper = styled.div`
-  width: 360px;
+  width: 460px;
   background-color: #f8f8f8;
   border-left: 0.6vh grey solid;
   border-right: 0.6vh grey solid;

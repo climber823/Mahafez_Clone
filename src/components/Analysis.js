@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { tradingViewMapping } from './ForexPairs';
 
 const AnalysisWidget = styled.div`
   background-color: #282c34;
@@ -21,7 +22,7 @@ const Analysis = () => {
       "width": "100%",
       "isTransparent": false,
       "height": 450,
-      "symbol": selectedAsset.replace("/", ""),
+      "symbol": tradingViewMapping[selectedAsset],
       "showIntervalTabs": true,
       "locale": "en",
       "colorTheme": "dark",

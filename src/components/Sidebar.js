@@ -68,8 +68,8 @@ const ErrorMessage = styled.div`
 
 const Sidebar = ({ setSlideVisible }) => {
   const dispatch = useDispatch();
-  const selectedAsset = useSelector(state => state.asset.selectedAsset);
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [error, setError] = useState('');
@@ -102,7 +102,7 @@ const Sidebar = ({ setSlideVisible }) => {
           // crypto: https://api.polygon.io/v2/aggs/ticker/X:BTCUSD/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
           // indice: https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
           // stocks: https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
-          const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${assetMapping[pair]}/prev?adjusted=true&apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R`);
+          const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${assetMapping[pair]}/prev?adjusted=true&apiKey=Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd`);
           const data = await response.json();
           
           console.log(assetMapping[pair], data)
@@ -124,8 +124,11 @@ const Sidebar = ({ setSlideVisible }) => {
         });
 
         const forexData = await Promise.all(forexDataPromises);
-        const filteredData = forexData.filter(row => row && row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
-        setData(filteredData);
+        const mainData = forexData.filter(row => row && true);
+        setData(mainData);
+        const filteredData = mainData.filter(row => row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
+        setFilteredData(filteredData);
+        setError('');
       } catch (err) {
         setError('Failed to fetch forex data.');
       }
@@ -135,6 +138,10 @@ const Sidebar = ({ setSlideVisible }) => {
 
   }, [selectedCategory]);
 
+  useEffect(() => {
+    const filteredData = data.filter(row => row && row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
+    setFilteredData(filteredData);
+  }, [searchQuery]);
   
   return (
     <SidebarContainer>
@@ -164,8 +171,8 @@ const Sidebar = ({ setSlideVisible }) => {
           </TableRow>
         </TableHead>
         <tbody>
-          {data.length > 0 ? (
-            data.map((row, index) => (
+          {filteredData.length > 0 ? (
+            filteredData.map((row, index) => (
               <TableRow key={index} onClick={() => dispatch(selectAsset(row))}>
                 <TableCell>{row.asset}</TableCell>
                 <TableCell>{row.buy}</TableCell>
