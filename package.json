@@ -34,7 +34,7 @@
     "web3": "^4.11.1"
   },
   "scripts": {
-    "start": "concurrently \"node server/server.js\" \"react-scripts start\"",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "client": "react-scripts start",
     "server": "node server/server.js",
