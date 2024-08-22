@@ -146,8 +146,9 @@ const Sidebar = ({ setSlideVisible }) => {
     const filteredData = data.filter(row => row && row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
     for (let row of data) {
       if(row.asset == assetInfo.asset) {
+        if(assetInfo.buy == row.buy) break;
         dispatch(selectAsset(row))
-        console.log("dispatch", row)
+        // console.log("dispatch", row)
         break;
       }
     }
@@ -184,7 +185,7 @@ const Sidebar = ({ setSlideVisible }) => {
             open: item.o.toFixed(5),
             close: item.c.toFixed(5),
             // volume: item.v,
-            avgPrice: item.c.toFixed(5),
+            avgPrice: ((parseFloat(newData[item.pair].buy) + parseFloat(newData[item.pair].sell)) / 2).toFixed(5),
             // low: item.l.toFixed(5),
             // high: item.h.toFixed(5),
           }
@@ -212,6 +213,7 @@ const Sidebar = ({ setSlideVisible }) => {
       
       for (let item of message) {
         if(item.ev == "XQ") {
+          console.log(item)
           newData[item.pair] = {
             ...newData[item.pair],
             buy: item.ap.toFixed(5),
@@ -219,12 +221,13 @@ const Sidebar = ({ setSlideVisible }) => {
             spread: Math.abs(item.ap - item.bp).toFixed(1)
           }
         } else if(item.ev == "XAS") {
+          console.log(item)
           newData[item.pair] = {
             ...newData[item.pair],
             open: item.o.toFixed(5),
             close: item.c.toFixed(5),
-            // volume: item.v,
             avgPrice: item.vw.toFixed(5),
+            // volume: item.v,
             // low: item.l.toFixed(5),
             // high: item.h.toFixed(5),
           }

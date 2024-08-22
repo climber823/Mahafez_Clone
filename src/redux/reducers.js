@@ -4,6 +4,7 @@ import { SELECT_ASSET, LOGIN, LOGOUT } from './actions';
 const assetInitialState = {
   selectedAsset: 'AUD/USD',
   assetInfo: {},
+  prevAssetInfo: {},
 };
 
 const authInitialState = {
@@ -18,7 +19,8 @@ const assetReducer = (state = assetInitialState, action) => {
       return {
         ...state,
         selectedAsset: action.payload.asset,
-        assetInfo: action.payload
+        prevAssetInfo: state.assetInfo,
+        assetInfo: action.payload,
       };
 
     default:

@@ -43,6 +43,7 @@ const getAssetType = (name) => {
 
 const SlideInComponent = ({ isVisible, onClose }) => {
   const assetInfo = useSelector(state => state.asset.assetInfo);
+  const prevInfo = useSelector(state => state.asset.prevAssetInfo);
 
   const [currencyData, setCurrencyData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -155,6 +156,13 @@ const SlideInComponent = ({ isVisible, onClose }) => {
     }
   }
 
+  const getChangeRate = () => {
+    const current = parseFloat(assetInfo.open);
+    const prev = parseFloat(prevInfo.close);
+    const rate = ((current - prev) / prev * 100.0);
+    return rate > 0 ? "+" + rate.toFixed(3) : rate.toFixed(3) 
+  }
+
   if (loading) return <Container isVisible={isVisible}><div>Loading...</div></Container>;
   if (error) return <Container isVisible={isVisible}><div>Error: {error}</div></Container>;
 
@@ -180,8 +188,12 @@ const SlideInComponent = ({ isVisible, onClose }) => {
             <ExchangeRate>
               <span className='big-number'>{parseFloat(currencyData?.avgPrice).toFixed(4)}</span>
               <sup className='small-number'>{getFifthDecimalDigit(parseFloat(currencyData?.avgPrice).toFixed(5))}</sup>
-              <span className='quote-name'>{currencyData?.quoteCurrency}</span>
-              <span className='change-rate'> +0.00 (+0.36%)</span>
+              <span className='quote-name'>{currencyData?.quote}</span>
+              <span
+                className={`change-rate ${getChangeRate() >= 0 ? 'green' : 'red'}`}
+            >
+                {getChangeRate() >= 0 ? `+0.00 (${getChangeRate()})` : `-0.00 (${getChangeRate()})`}%
+              </span>
               <p className='market-open'>
                 - MARKET OPEN <span>{getFormattedTimestamp()}</span>
               </p>
@@ -191,11 +203,11 @@ const SlideInComponent = ({ isVisible, onClose }) => {
             <InfoText>{currencyData?.volume} VOLUME</InfoText> */}
             <PriceContainer>
               <div className='mx-2'>
-                <div className='value'>{currencyData?.buy}</div>
+                <div className='value'>{prevInfo?.close}</div>
                 <div className='name'>PREV</div>
               </div>
               <div className='mx-2'>
-                <div className='value'>{currencyData?.sell}</div>
+                <div className='value'>{currencyData?.open}</div>
                 <div className='name'>OPEN</div>
               </div>
               <div className='mx-2'>
@@ -424,6 +436,12 @@ const ExchangeRate = styled.div`
     span {
       color: #6a6d78;
     }
+  }
+  .green {
+    color: green;
+  }
+  .red {
+    color: red;
   }
 `;
 
