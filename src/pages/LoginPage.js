@@ -18,7 +18,7 @@ const LoginPage = () => {
  
   const handleLogin = async (id, pwd) => {
     // axios.post(`${process.env.REACT_APP_API_URL_DEPLOY}/api/auth/login`, {
-    axios.post(`https://mahafez-server.onrender.com/api/auth/login`, {
+    axios.post(`http://localhost:5000/api/auth/login`, {
       account_id: id, 
       password: pwd
     })

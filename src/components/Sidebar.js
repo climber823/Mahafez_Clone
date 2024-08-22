@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { FaDatabase, FaInfoCircle } from 'react-icons/fa';
 import { selectAsset } from '../redux/actions';
 import Dropdown from './Dropdown';
-import { forexPairs, assetMapping } from './ForexPairs';
+import { forexPairs, assetMapping, assetSocketMapping, nameToPairMapping, typeMapping } from './ForexPairs';
 
 const SidebarContainer = styled.div`
   width: 100%;
@@ -53,6 +53,7 @@ const TableCell = styled.td`
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #3a3f51;
+  transition: background-color 0.5s ease;
 `;
 
 const IconWrapper = styled.div`
@@ -66,6 +67,8 @@ const ErrorMessage = styled.div`
   margin: 20px 0;
 `;
 
+let newData = {}
+
 const Sidebar = ({ setSlideVisible }) => {
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
@@ -74,7 +77,8 @@ const Sidebar = ({ setSlideVisible }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [error, setError] = useState('');
   const [dropdownWidth, setDropdownWidth] = useState('100px');
-
+  const assetInfo = useSelector(state => state.asset.assetInfo);
+  
   const getCategory = (name) => {
     switch(name) {
       case "All": return "all";
@@ -95,26 +99,21 @@ const Sidebar = ({ setSlideVisible }) => {
         const category = getCategory(selectedCategory);
         const pairs = forexPairs[category] || forexPairs.all;
 
-        console.log(pairs)
-
         const forexDataPromises = pairs.map(async (pair) => {
-          // forex: https://api.polygon.io/v2/aggs/ticker/C:EURUSD/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
-          // crypto: https://api.polygon.io/v2/aggs/ticker/X:BTCUSD/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
-          // indice: https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
-          // stocks: https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2023-01-09/2023-01-09?apiKey=h3x4wS45FF6rhfVAOFx0Wdq1dkXAX11R
           const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${assetMapping[pair]}/prev?adjusted=true&apiKey=Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd`);
           const data = await response.json();
           
-          console.log(assetMapping[pair], data)
+          if (data.resultsCount <= 0) return null;
 
-          // console.log(data)
-          if( data.resultsCount <= 0 ) return null;
+          let spread = (Math.abs(data.results[0]?.c - data.results[0]?.o)).toFixed(1)
+          
+          if (typeMapping[pair] == "currencies") spread = (Math.abs(data.results[0]?.c - data.results[0]?.o) * 10000).toFixed(1)
 
           return {
             asset: pair,
-            buy: data.results[0]?.c.toFixed(5), // Close price (or another suitable field from your API)
-            sell: data.results[0]?.o.toFixed(5), // Open price (or another suitable field from your API)
-            spread: Math.abs(data.results[0]?.c - data.results[0]?.o).toFixed(5), // Example spread calculation
+            buy: data.results[0]?.c.toFixed(5),
+            sell: data.results[0]?.o.toFixed(5),
+            spread: spread,
             volume: data.results[0]?.v,
             avgPrice: data.results[0]?.vw.toFixed(5),
             number: data.results[0]?.n,
@@ -128,21 +127,126 @@ const Sidebar = ({ setSlideVisible }) => {
         setData(mainData);
         const filteredData = mainData.filter(row => row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
         setFilteredData(filteredData);
-        setError('');
+        // setError('');
       } catch (err) {
         setError('Failed to fetch forex data.');
       }
     };
 
     fetchForexData();
-
   }, [selectedCategory]);
 
-  useEffect(() => {
+  useEffect(() => {  
     const filteredData = data.filter(row => row && row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
+    for (let row of data) {
+      if(row.asset == assetInfo.asset) {
+        dispatch(selectAsset(row))
+        break;
+      }
+    }
     setFilteredData(filteredData);
-  }, [searchQuery]);
-  
+  }, [searchQuery, data]);
+
+  useEffect(() => {
+    const pairs = forexPairs.all;
+    const wsForex = new WebSocket('wss://socket.polygon.io/forex');
+    const wsCrypto = new WebSocket('wss://socket.polygon.io/crypto');
+    const subscriptions = pairs.map(pair => assetSocketMapping[pair]).join(',');
+    
+    wsForex.onopen = () => {
+      wsForex.send(JSON.stringify({ action: 'auth', params: 'Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd' }));
+      wsForex.send(JSON.stringify({ action: 'subscribe', params: subscriptions }));
+    };
+
+    wsForex.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      for (let item of message) {
+        if(item.ev == "CAS") {
+          newData[item.pair] = {
+            buy: item.o.toFixed(5),
+            sell: item.c.toFixed(5),
+            spread: (Math.abs(item.o - item.c) * 10000).toFixed(1)
+          }
+        }
+      }
+    };
+
+    wsForex.onerror = (err) => {
+      // setError('WebSocket error: ' + err.message);
+    };
+
+    wsForex.onclose = () => {
+      // setError('Forex WebSocket connection closed');
+    };
+
+    wsCrypto.onopen = () => {
+      wsCrypto.send(JSON.stringify({ action: 'auth', params: 'Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd' }));
+      wsCrypto.send(JSON.stringify({ action: 'subscribe', params: subscriptions }));
+    };
+
+    wsCrypto.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      
+      for (let item of message) {
+        if(item.ev == "XAS") {
+          newData[item.pair] = {
+            buy: item.o.toFixed(5),
+            sell: item.c.toFixed(5),
+            spread: Math.abs(item.o - item.c).toFixed(1)
+          }
+        }
+      }
+    };
+
+    wsCrypto.onerror = (err) => {
+      // setError('WebSocket error: ' + err.message);
+    };
+
+    wsCrypto.onclose = () => {
+      // setError('Crypto WebSocket connection closed');
+    };
+
+    const dataUpdateInterval = setInterval(() => {
+      setData(prevData => prevData.map(row => {
+        const pairName = nameToPairMapping[row.asset] ? nameToPairMapping[row.asset] : row.asset
+
+        if (newData[pairName]) {
+
+          const newSpread = parseFloat(newData[pairName].spread)
+          const prevSpread = parseFloat(row.spread)
+          const delta = Math.abs(newSpread - prevSpread)
+          const rowColor = prevSpread && delta > 0.3 ? (newSpread > prevSpread ? 'red' : newSpread < prevSpread ? 'green' : '#fff') : '#fff';
+        
+          const updateRow = {
+            ...row,
+            buy: newData[pairName].buy,
+            sell: newData[pairName].sell,
+            spread: newData[pairName].spread,
+            rowColor,
+          }
+
+          return updateRow
+        }
+        return row;
+      }));
+
+      setTimeout(() => {
+        setData(prevData => prevData.map(row => {
+          return {
+            ...row,
+            rowColor: '#fff'
+          }
+        }))
+      }, 1500)
+    }, 5000);
+
+    return () => {
+      wsForex.close();
+      clearInterval(dataUpdateInterval); // Clean up the interval on component unmount
+    };
+
+  }, []);
+
   return (
     <SidebarContainer>
       <SearchBox>
@@ -160,6 +264,7 @@ const Sidebar = ({ setSlideVisible }) => {
         />
       </SearchBox>
       {error && <ErrorMessage>{error}</ErrorMessage>}
+      { assetInfo.asset }
       <Table>
         <TableHead>
           <TableRow>
@@ -173,7 +278,11 @@ const Sidebar = ({ setSlideVisible }) => {
         <tbody>
           {filteredData.length > 0 ? (
             filteredData.map((row, index) => (
-              <TableRow key={index} onClick={() => dispatch(selectAsset(row))}>
+              <TableRow 
+                key={index} 
+                onClick={() => dispatch(selectAsset(row))}
+                style={{ color: row.rowColor || '#fff' }}
+              >
                 <TableCell>{row.asset}</TableCell>
                 <TableCell>{row.buy}</TableCell>
                 <TableCell>{row.sell}</TableCell>

@@ -75,7 +75,6 @@ const SlideInComponent = ({ isVisible, onClose }) => {
         fetch(`https://openexchangerates.org/api/currencies.json?app_id=3717da8424704e17a4d317187b284c98`)
         .then(response => response.json())
         .then(data => {
-          console.log(base, quote)
           const baseFullName = data[base] ? data[base] : assetInfo.asset;
           const quoteFullName = data[quote];
           const fullCurrencyPair = `${baseFullName}/${quoteFullName} OANDA`;
