@@ -84,8 +84,8 @@ const Dropdown = ({ onSelectCategory, selectedCategory, onWidthChange }) => {
         {/* <DropdownItem onClick={() => handleSelect('Most Popular')}>Most Popular</DropdownItem>
         <DropdownItem onClick={() => handleSelect('My Favorites')}>My Favorites</DropdownItem> */}
         <DropdownItem onClick={() => handleSelect('Currencies')}>Currencies</DropdownItem>
-        {/* <DropdownItem onClick={() => handleSelect('Commodities')}>Commodities</DropdownItem>
-        <DropdownItem onClick={() => handleSelect('Indices')}>Indices</DropdownItem>
+        <DropdownItem onClick={() => handleSelect('Commodities')}>Commodities</DropdownItem>
+        {/* <DropdownItem onClick={() => handleSelect('Indices')}>Indices</DropdownItem>
         <DropdownItem onClick={() => handleSelect('Stocks')}>Stocks</DropdownItem> */}
         <DropdownItem onClick={() => handleSelect('Crypto Currencies')}>Crypto Currencies</DropdownItem>
       </DropdownContent>

@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { fetchCurrencyData } from '../utils/api';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-import { tradingViewMapping, coins } from './ForexPairs';
+import { tradingViewMapping, typeMapping } from './ForexPairs';
 
 function getCountryCodeFromCurrency(currencyCode) {
   if (currencyCode?.length === 3) {
@@ -59,7 +59,7 @@ const SlideInComponent = ({ isVisible, onClose }) => {
         if(!assetInfo) return;
   
         const { base, quote } = extractDetails(tradingViewMapping[assetInfo.asset])
-        const assetType = getAssetType(tradingViewMapping[assetInfo.asset])
+        const assetType = typeMapping[assetInfo.asset]
 
         const baseCountryCode = getCountryCodeFromCurrency(base);
         const quoteCountryCode = getCountryCodeFromCurrency(quote);
@@ -68,6 +68,8 @@ const SlideInComponent = ({ isVisible, onClose }) => {
 
         if (assetType == "crypto") {
           imageUrl = `https://s3-symbol-logo.tradingview.com/crypto/XTVC${base}--big.svg`;
+        } else if (assetType == "commodities") {
+          imageUrl = `https://s3-symbol-logo.tradingview.com/metal/${assetInfo.asset.toLowerCase()}--big.svg`;
         }
 
         fetch(`https://openexchangerates.org/api/currencies.json?app_id=3717da8424704e17a4d317187b284c98`)
