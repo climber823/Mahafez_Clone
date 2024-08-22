@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { FaDatabase, FaInfoCircle } from 'react-icons/fa';
 import { selectAsset } from '../redux/actions';
 import Dropdown from './Dropdown';
-import { forexPairs, assetMapping, assetSocketMapping, nameToPairMapping, typeMapping } from './ForexPairs';
+import { forexPairs, assetMapping, mainSubMapping, extraSubMapping, nameToPairMapping, typeMapping } from './ForexPairs';
 
 const SidebarContainer = styled.div`
   width: 100%;
@@ -68,6 +68,7 @@ const ErrorMessage = styled.div`
 `;
 
 let newData = {}
+const today = new Date().toISOString().split('T')[0];
 
 const Sidebar = ({ setSlideVisible }) => {
   const dispatch = useDispatch();
@@ -99,8 +100,9 @@ const Sidebar = ({ setSlideVisible }) => {
         const category = getCategory(selectedCategory);
         const pairs = forexPairs[category] || forexPairs.all;
 
+
         const forexDataPromises = pairs.map(async (pair) => {
-          const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${assetMapping[pair]}/prev?adjusted=true&apiKey=Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd`);
+          const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${assetMapping[pair]}/range/1/day/${today}/${today}?adjusted=true&apiKey=Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd`);
           const data = await response.json();
           
           if (data.resultsCount <= 0) return null;
@@ -109,7 +111,8 @@ const Sidebar = ({ setSlideVisible }) => {
           
           if (typeMapping[pair] == "currencies") spread = (Math.abs(data.results[0]?.c - data.results[0]?.o) * 10000).toFixed(1)
 
-          return {
+          const pairName = nameToPairMapping[pair] ? nameToPairMapping[pair] : pair
+          const newPair = {
             asset: pair,
             buy: data.results[0]?.c.toFixed(5),
             sell: data.results[0]?.o.toFixed(5),
@@ -119,7 +122,10 @@ const Sidebar = ({ setSlideVisible }) => {
             number: data.results[0]?.n,
             low: data.results[0]?.l,
             high: data.results[0]?.h,
-          };
+          }
+          newData[pairName] = newPair
+
+          return newPair;
         });
 
         const forexData = await Promise.all(forexDataPromises);
@@ -141,6 +147,7 @@ const Sidebar = ({ setSlideVisible }) => {
     for (let row of data) {
       if(row.asset == assetInfo.asset) {
         dispatch(selectAsset(row))
+        console.log("dispatch", row)
         break;
       }
     }
@@ -151,24 +158,39 @@ const Sidebar = ({ setSlideVisible }) => {
     const pairs = forexPairs.all;
     const wsForex = new WebSocket('wss://socket.polygon.io/forex');
     const wsCrypto = new WebSocket('wss://socket.polygon.io/crypto');
-    const subscriptions = pairs.map(pair => assetSocketMapping[pair]).join(',');
+    const mainSub = pairs.map(pair => mainSubMapping[pair]).join(',');
+    const extraSub = pairs.map(pair => extraSubMapping[pair]).join(',');
     
     wsForex.onopen = () => {
-      wsForex.send(JSON.stringify({ action: 'auth', params: 'Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd' }));
-      wsForex.send(JSON.stringify({ action: 'subscribe', params: subscriptions }));
+      wsForex.send(JSON.stringify({ action: 'auth', params: '34qaQl1z0G3wJmaFcQg1u90HgRugSLHs' }));
+      wsForex.send(JSON.stringify({ action: 'subscribe', params: mainSub }));
+      wsForex.send(JSON.stringify({ action: 'subscribe', params: extraSub }));
     };
 
     wsForex.onmessage = (event) => {
       const message = JSON.parse(event.data);
       for (let item of message) {
-        if(item.ev == "CAS") {
+        if(item.ev == "C") {
+          newData[item.p] = {
+            ...newData[item.p],
+            buy: item.a.toFixed(5),
+            sell: item.b.toFixed(5),
+            spread: (Math.abs(item.a - item.b) * 10000).toFixed(1)
+          }
+        }
+        else if(item.ev == "CAS") {
           newData[item.pair] = {
-            buy: item.o.toFixed(5),
-            sell: item.c.toFixed(5),
-            spread: (Math.abs(item.o - item.c) * 10000).toFixed(1)
+            ...newData[item.pair],
+            open: item.o.toFixed(5),
+            close: item.c.toFixed(5),
+            // volume: item.v,
+            avgPrice: item.c.toFixed(5),
+            // low: item.l.toFixed(5),
+            // high: item.h.toFixed(5),
           }
         }
       }
+      // console.log("newData", newData)
     };
 
     wsForex.onerror = (err) => {
@@ -181,18 +203,30 @@ const Sidebar = ({ setSlideVisible }) => {
 
     wsCrypto.onopen = () => {
       wsCrypto.send(JSON.stringify({ action: 'auth', params: 'Im5XAoTdOy0Bkj9pncquisPmog0Nmvkd' }));
-      wsCrypto.send(JSON.stringify({ action: 'subscribe', params: subscriptions }));
+      wsCrypto.send(JSON.stringify({ action: 'subscribe', params: mainSub }));
+      wsCrypto.send(JSON.stringify({ action: 'subscribe', params: extraSub }));
     };
 
     wsCrypto.onmessage = (event) => {
       const message = JSON.parse(event.data);
       
       for (let item of message) {
-        if(item.ev == "XAS") {
+        if(item.ev == "XQ") {
           newData[item.pair] = {
-            buy: item.o.toFixed(5),
-            sell: item.c.toFixed(5),
-            spread: Math.abs(item.o - item.c).toFixed(1)
+            ...newData[item.pair],
+            buy: item.ap.toFixed(5),
+            sell: item.bp.toFixed(5),
+            spread: Math.abs(item.ap - item.bp).toFixed(1)
+          }
+        } else if(item.ev == "XAS") {
+          newData[item.pair] = {
+            ...newData[item.pair],
+            open: item.o.toFixed(5),
+            close: item.c.toFixed(5),
+            // volume: item.v,
+            avgPrice: item.vw.toFixed(5),
+            // low: item.l.toFixed(5),
+            // high: item.h.toFixed(5),
           }
         }
       }
@@ -219,9 +253,7 @@ const Sidebar = ({ setSlideVisible }) => {
         
           const updateRow = {
             ...row,
-            buy: newData[pairName].buy,
-            sell: newData[pairName].sell,
-            spread: newData[pairName].spread,
+            ...newData[pairName],
             rowColor,
           }
 
@@ -264,7 +296,6 @@ const Sidebar = ({ setSlideVisible }) => {
         />
       </SearchBox>
       {error && <ErrorMessage>{error}</ErrorMessage>}
-      { assetInfo.asset }
       <Table>
         <TableHead>
           <TableRow>
