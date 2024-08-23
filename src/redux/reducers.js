@@ -19,7 +19,7 @@ const assetReducer = (state = assetInitialState, action) => {
       return {
         ...state,
         selectedAsset: action.payload.asset,
-        prevAssetInfo: state.assetInfo,
+        prevAssetInfo: state.assetInfo.asset == action.payload.asset ? state.assetInfo : action.payload,
         assetInfo: action.payload,
       };
 

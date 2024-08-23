@@ -146,7 +146,7 @@ const Sidebar = ({ setSlideVisible }) => {
     const filteredData = data.filter(row => row && row.asset.toLowerCase().includes(searchQuery.toLowerCase()));
     for (let row of data) {
       if(row.asset == assetInfo.asset) {
-        if(assetInfo.buy == row.buy) break;
+        if(assetInfo?.buy == row?.buy) break;
         dispatch(selectAsset(row))
         // console.log("dispatch", row)
         break;

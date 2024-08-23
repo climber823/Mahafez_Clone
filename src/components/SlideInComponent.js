@@ -203,11 +203,11 @@ const SlideInComponent = ({ isVisible, onClose }) => {
             <InfoText>{currencyData?.volume} VOLUME</InfoText> */}
             <PriceContainer>
               <div className='mx-2'>
-                <div className='value'>{prevInfo?.close}</div>
+                <div className='value'>{prevInfo? prevInfo.close : currencyData?.open}</div>
                 <div className='name'>PREV</div>
               </div>
               <div className='mx-2'>
-                <div className='value'>{currencyData?.open}</div>
+                <div className='value'>{currencyData ? currencyData.open : prevInfo?.close}</div>
                 <div className='name'>OPEN</div>
               </div>
               <div className='mx-2'>
@@ -236,28 +236,28 @@ const SlideInComponent = ({ isVisible, onClose }) => {
         
         <InputContainer>
           <Button onClick={() => handleDecrement(setAmount)}>-</Button>
-          <Input type="number" value={amount} readOnly />
+          <Input type="number" value={amount} onChange={(e) => {setAmount(e.target.value)}}/>
           <Button onClick={() => handleIncrement(setAmount)}>+</Button>
         </InputContainer>
 
         <Label>Stop Loss ($):</Label>
         <InputContainer>
           <Button onClick={() => handleDecrement(setStopLoss)}>-</Button>
-          <Input type="number" value={stopLoss} readOnly />
+          <Input type="number" value={stopLoss} onChange={(e) => {setStopLoss(e.target.value)}} />
           <Button onClick={() => handleIncrement(setStopLoss)}>+</Button>
         </InputContainer>
 
         <Label>Take Profit ($):</Label>
         <InputContainer>
           <Button onClick={() => handleDecrement(setTakeProfit)}>-</Button>
-          <Input type="number" value={takeProfit} readOnly />
+          <Input type="number" value={takeProfit} onChange={(e) => {setTakeProfit(e.target.value)}} />
           <Button onClick={() => handleIncrement(setTakeProfit)}>+</Button>
         </InputContainer>
 
         <Label>Limit Order:</Label>
         <InputContainer>
           <Button onClick={() => handleDecrement(setLimitOrder)}>-</Button>
-          <Input type="number" value={limitOrder} readOnly />
+          <Input type="number" value={limitOrder} onChange={(e) => {setLimitOrder(e.target.value)}} />
           <Button onClick={() => handleIncrement(setLimitOrder)}>+</Button>
         </InputContainer>
 
