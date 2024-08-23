@@ -294,6 +294,7 @@ const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   color: #ffffff;
+  font-size: 10px;
 `;
 
 const Thead = styled.thead`
@@ -304,6 +305,7 @@ const Th = styled.th`
   padding: 10px;
   text-align: center;
   border-bottom: 1px solid #ccc;
+  font-weight: normal;
 `;
 
 const Tbody = styled.tbody`
@@ -326,23 +328,23 @@ const ClosedPositions = styled.div`
   input {
     padding: 5px 20px;
     margin: 3px 0px;
-    font-size: 13px;
+    font-size: 10px;
     border-radius: 7px;
   }
   span {
     padding: 10px 20px;
-    font-size: 13px;
+    font-size: 10px;
   }
   @media (max-width: 768px) {
       input {
         width: 95%;
         padding: 1px 3px;
-        font-size: 12px;
+        font-size: 10px;
         border-radius: 4px;
       }
       span {
         padding: 0px;
-        font-size: 11px;
+        font-size: 10px;
       }
   }
 `;

@@ -44,6 +44,7 @@ const TableHead = styled.thead`
 `;
 
 const TableRow = styled.tr`
+  font-size: 10px;
   &:nth-child(even) {
     background-color: #1c2749;
   }
@@ -122,6 +123,8 @@ const Sidebar = ({ setSlideVisible }) => {
             number: data.results[0]?.n,
             low: data.results[0]?.l,
             high: data.results[0]?.h,
+            open: data.results[0]?.c.toFixed(5),
+            close: data.results[0]?.o.toFixed(5),
           }
           newData[pairName] = newPair
 

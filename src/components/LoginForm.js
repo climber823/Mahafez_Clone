@@ -15,6 +15,7 @@ const Container = styled.div`
 const Title = styled.h2`
   font-size: 26px;
   margin: 0;
+  margin-bottom: 12px;
   padding: 10px 0px;
   color: #333;
   text-align: center;
@@ -25,7 +26,7 @@ const Title = styled.h2`
 const Description = styled.p`
   font-size: 14px;
   color: #666;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   text-align: center;
 `;
 

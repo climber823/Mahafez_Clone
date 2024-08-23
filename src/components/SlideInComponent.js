@@ -198,9 +198,6 @@ const SlideInComponent = ({ isVisible, onClose }) => {
                 - MARKET OPEN <span>{getFormattedTimestamp()}</span>
               </p>
             </ExchangeRate>
-            {/* <InfoText>{currencyData?.change} ({currencyData?.changePercentage}%)</InfoText>
-            <InfoText>MARKET OPEN (AS OF {currencyData?.marketClose})</InfoText>
-            <InfoText>{currencyData?.volume} VOLUME</InfoText> */}
             <PriceContainer>
               <div className='mx-2'>
                 <div className='value'>{prevInfo? prevInfo.close : currencyData?.open}</div>
@@ -226,7 +223,7 @@ const SlideInComponent = ({ isVisible, onClose }) => {
         <InfoText>Available Amount: {currencyData?.availableAmount} AUD</InfoText> */}
         <InfoText2>
           <InfoText>Leverage: 1:100</InfoText>
-          <InfoText>Available Amount: 286 {currencyData?.baseCurrency}</InfoText>
+          <InfoText>Available Amount: 286 {currencyData?.base}</InfoText>
         </InfoText2>
         <InfoText2>
           <InfoText>Amount:</InfoText>
@@ -236,33 +233,34 @@ const SlideInComponent = ({ isVisible, onClose }) => {
         
         <InputContainer>
           <Button onClick={() => handleDecrement(setAmount)}>-</Button>
-          <Input type="number" value={amount} onChange={(e) => {setAmount(e.target.value)}}/>
+          <Input type="number" value={amount} onChange={(e) => {setAmount(parseInt(e.target.value))}}/>
           <Button onClick={() => handleIncrement(setAmount)}>+</Button>
         </InputContainer>
 
         <Label>Stop Loss ($):</Label>
         <InputContainer>
           <Button onClick={() => handleDecrement(setStopLoss)}>-</Button>
-          <Input type="number" value={stopLoss} onChange={(e) => {setStopLoss(e.target.value)}} />
+          <Input type="number" value={stopLoss} onChange={(e) => {setStopLoss(parseInt(e.target.value))}} />
           <Button onClick={() => handleIncrement(setStopLoss)}>+</Button>
         </InputContainer>
 
         <Label>Take Profit ($):</Label>
         <InputContainer>
           <Button onClick={() => handleDecrement(setTakeProfit)}>-</Button>
-          <Input type="number" value={takeProfit} onChange={(e) => {setTakeProfit(e.target.value)}} />
+          <Input type="number" value={takeProfit} onChange={(e) => {setTakeProfit(parseInt(e.target.value))}} />
           <Button onClick={() => handleIncrement(setTakeProfit)}>+</Button>
         </InputContainer>
 
         <Label>Limit Order:</Label>
         <InputContainer>
           <Button onClick={() => handleDecrement(setLimitOrder)}>-</Button>
-          <Input type="number" value={limitOrder} onChange={(e) => {setLimitOrder(e.target.value)}} />
+          <Input type="number" value={limitOrder} onChange={(e) => {setLimitOrder(parseInt(e.target.value))}} />
           <Button onClick={() => handleIncrement(setLimitOrder)}>+</Button>
         </InputContainer>
 
         <InputContainer style={{ justifyContent: 'space-between' }}>
           <ActionButton className="sell">Sell {currencyData?.sell}</ActionButton>
+          <div className='mx-2'></div>
           <ActionButton className="buy">Buy {currencyData?.buy}</ActionButton>
         </InputContainer>
       </BodyContainer>
@@ -285,7 +283,7 @@ const Container = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  width: 320px;
+  width: 380px;
   height: 100%;
   padding-bottom: 20px;
   overflow: scroll;
@@ -329,7 +327,6 @@ const FlagContainer = styled.div`
     color: #6a6d78;
     margin: 0px;
     font-size: 14px;
-    font-weight: 400;
   }
 `
 
@@ -381,6 +378,7 @@ const BackButton = styled.button`
 
 const CurrencyInfo = styled.div`
   margin-bottom: 20px;
+  font-family: -apple-system,BlinkMacSystemFont,Trebuchet MS,Roboto,Ubuntu,sans-serif;
 `;
 
 const PriceContainer = styled.div`
@@ -388,12 +386,11 @@ const PriceContainer = styled.div`
   justify-content: space-between;
   margin-top: 20px;
   .value {
-    font-weight: 500;
-    font-size: 16px;
+    font-size: 18px;
     color: #131722;
   }
   .name {
-    font-size: 10px;
+    font-size: 11px;
     color: #6a6d78;
   }
 `
@@ -416,21 +413,21 @@ const ExchangeRate = styled.div`
     font-weight: 700;
   }
   .small-number {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
   }
   .quote-name {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     margin-left: 5px;
   }
   .change-rate {
-    font-size: 16px;
+    font-size: 18px;
     color: #089981;
     margin-left: 10px;
   }
   .market-open {
-    font-size: 10px;
+    font-size: 11px;
     margin-top: 0px;
     color: #42bda8;
     span {
@@ -454,7 +451,6 @@ const InfoText = styled.div`
 
 const Label = styled.label`
   margin: 10px 0 5px;
-  font-weight: bold;
   color: black;
 `;
 
@@ -471,7 +467,6 @@ const Input = styled.input`
   border-radius: 0px;
   text-align: center;
   font-size: 13px;
-  font-weight: 400;
 `;
 
 const Button = styled.button`
@@ -479,7 +474,6 @@ const Button = styled.button`
   border: none;
   border-radius: 3px;
   cursor: pointer;
-  font-weight: bold;
   background-color: #e9ecef;
   border: 1px solid #ccc;
   font-size: 13px;

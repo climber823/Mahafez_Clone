@@ -49,12 +49,12 @@ const Header = ({ dropdownVisible, setDropdownVisible }) => {
         <HeaderTitle>Mahafez</HeaderTitle>
       </HeaderLeft>
       <HeaderCenter>
-        <HeaderItem>P&L ($): <NegativeValue>{userInfo.p_l}</NegativeValue></HeaderItem>
-        <HeaderItem>Balance: <Value>{userInfo.balance}</Value></HeaderItem>
-        <HeaderItem>Equity: <Value>{userInfo.equity}</Value></HeaderItem>
-        <HeaderItem>Free Margin: <Value>{userInfo.free_margin}</Value></HeaderItem>
-        <HeaderItem>Used Margin: <Value>{userInfo.used_margin}</Value></HeaderItem>
-        <HeaderItem>Margin Level: <Value>{userInfo.margin_level}</Value></HeaderItem>
+        <HeaderItem>P&L ($): <NegativeValue>{userInfo.p_l.toFixed(2)}$</NegativeValue></HeaderItem>
+        <HeaderItem>Balance: <Value>{userInfo.balance.toFixed(2)}$</Value></HeaderItem>
+        <HeaderItem>Equity: <Value>{userInfo.equity.toFixed(2)}$</Value></HeaderItem>
+        <HeaderItem>Free Margin: <PositiveValue>{userInfo.free_margin.toFixed(2)}$</PositiveValue></HeaderItem>
+        <HeaderItem>Used Margin: <Value>{userInfo.used_margin.toFixed(2)}$</Value></HeaderItem>
+        <HeaderItem>Margin Level: <Value>{userInfo.margin_level.toFixed(2)}%</Value></HeaderItem>
       </HeaderCenter>
       <HeaderRight>
         <Dropdown ref={dropdownRef}>
@@ -103,7 +103,6 @@ const HeaderContainer = styled.div`
   padding: 10px 10px;
   padding-left: 10px;
   font-size: 14px;
-  font-weight: bold;
   background-color: rgb(7, 10, 50);
   color: white;
   transition: margin-right 0.3s ease; /* Transition effect for content margin */
@@ -136,7 +135,6 @@ const HeaderRight = styled.div`
 
 const HeaderTitle = styled.span`
   font-size: 18px;
-  font-weight: bold;
   padding-left: 10px;
 `;
 
@@ -145,11 +143,14 @@ const HeaderItem = styled.span`
 `;
 
 const Value = styled.span`
-  font-weight: bold;
 `;
 
 const NegativeValue = styled(Value)`
   color: red;
+`;
+
+const PositiveValue = styled(Value)`
+  color: green;
 `;
 
 const Welcome = styled.span`
