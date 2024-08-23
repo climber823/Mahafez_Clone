@@ -2,6 +2,16 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## package.json
+"scripts": {
+  "start": "react-scripts start",
+  "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build && javascript-obfuscator build/ --output build/ && node minify.js",
+  "client": "react-scripts start",
+  "server": "node server/server.js",
+  "test": "concurrently \"node server/server.js\" \"react-scripts start\"",
+  "eject": "concurrently \"node server/server.js\" \"react-scripts eject\""
+},
+
 ## Available Scripts
 
 First, install node modules.

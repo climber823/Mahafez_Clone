@@ -40,7 +40,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build && javascript-obfuscator build/ --output build/ && node minify.js",
+    "build": "react-scripts build",
     "client": "react-scripts start",
     "server": "node server/server.js",
     "test": "concurrently \"node server/server.js\" \"react-scripts start\"",
